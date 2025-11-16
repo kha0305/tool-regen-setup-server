@@ -56,7 +56,7 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="gameName" className={labelClasses}>Game Name</label>
-          <select id="gameName" value={selectedGame} onChange={handleGameSelect} className={inputClasses}>
+          <select id="gameName" value={selectedGame} onChange={handleGameSelect} className={inputClasses} title="Select the game you want to create a server for. If your game isn't listed, choose 'Other'.">
             {SUPPORTED_GAMES.map(game => (
                 <option key={game} value={game}>{game}</option>
             ))}
@@ -76,28 +76,29 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
                     placeholder="e.g., V Rising, 7 Days to Die" 
                     required 
                     autoFocus
+                    title="Enter the name of the game if it's not in the dropdown list."
                  />
             </div>
         )}
         
         <div>
           <label htmlFor="serverName" className={labelClasses}>Server Name</label>
-          <input type="text" id="serverName" value={serverName} onChange={e => setServerName(e.target.value)} className={inputClasses} required />
+          <input type="text" id="serverName" value={serverName} onChange={e => setServerName(e.target.value)} className={inputClasses} required title="The name that will appear in the in-game server browser." />
         </div>
 
         <div>
           <label htmlFor="playerCount" className={labelClasses}>Max Players ({playerCount})</label>
-          <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
+          <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" title="Set the maximum number of players that can join the server at one time." />
         </div>
 
         <div>
           <label htmlFor="serverDescription" className={labelClasses}>Server Description, Mods & Rules</label>
-          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} placeholder="e.g., PvE focused, 2x loot, list any mods..."></textarea>
+          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} placeholder="e.g., PvE focused, 2x loot, list any mods..." title="Describe your server's purpose. Mention any special rules, mods, or settings (e.g., PvE, 2x loot)."></textarea>
         </div>
 
         <div>
           <label htmlFor="worldSeed" className={labelClasses}>World Seed / Map Name (Optional)</label>
-          <input type="text" id="worldSeed" value={worldSeedOrMap} onChange={e => setWorldSeedOrMap(e.target.value)} className={inputClasses} placeholder="Leave empty for random/default" />
+          <input type="text" id="worldSeed" value={worldSeedOrMap} onChange={e => setWorldSeedOrMap(e.target.value)} className={inputClasses} placeholder="Leave empty for random/default" title="Enter a specific seed for world generation or a map name. Leave blank for a random/default world." />
         </div>
 
         <button type="submit" disabled={isLoading} className="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105">

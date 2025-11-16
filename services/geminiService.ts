@@ -1,3 +1,5 @@
+
+// FIX: Use named imports for GoogleGenAI and Type as per the guidelines.
 import { GoogleGenAI, Type } from '@google/genai';
 import type { ServerConfig, GeneratedConfig } from '../types';
 
@@ -21,7 +23,7 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
     Your Tasks:
     1.  Identify the correct file names and formats for the specified game (e.g., server.cfg, Game.ini, server-settings.json).
     2.  Generate the content for these files based on the user's request.
-    3.  Create a simple shell startup script (start.sh) for Linux. Assume the server executable is in the same directory. The script should allocate a reasonable amount of resources for the game and player count and include a restart loop if applicable.
+    3.  Create a simple shell startup script (start.sh) for Linux. Assume the server executable is in the same directory. The script should allocate a reasonable amount of of resources for the game and player count and include a restart loop if applicable.
     4.  Provide a brief, user-friendly explanation of the generated files and any next steps the user should take (e.g., "Place these files in your server's root directory and run 'chmod +x start.sh' before executing it.").
 
     Return the output in the specified JSON format.
@@ -35,6 +37,7 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
       config: {
         responseMimeType: "application/json",
         responseSchema: {
+          // FIX: Use the Type enum for schema properties as per the guidelines.
           type: Type.OBJECT,
           properties: {
             explanation: {
@@ -67,15 +70,15 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
 
     rawResponseText = response.text;
     
-    // The model might wrap the JSON in markdown backticks. Clean it before parsing.
-    const cleanedJsonString = rawResponseText.replace(/^```json\n/, '').replace(/\n```$/, '').trim();
-
-    if (!cleanedJsonString) {
+    // When using responseSchema, the model returns a clean JSON string.
+    // The defensive cleaning for markdown backticks is not required.
+    if (!rawResponseText) {
         throw new Error("The AI returned an empty response.");
     }
     
-    const resultJson = JSON.parse(cleanedJsonString);
+    const resultJson = JSON.parse(rawResponseText);
     
+    // The schema is enforced by the model, but a simple check ensures robustness.
     if (!resultJson.files || !resultJson.explanation) {
         throw new Error("AI response is missing required fields (files or explanation).");
     }
@@ -83,4 +86,19 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
     return resultJson as GeneratedConfig;
 
   } catch (error) {
-    console.error
+    console.error("Error calling or processing Gemini API response:", error);
+    // Log the raw text for better debugging.
+    if (rawResponseText) {
+        console.error("Raw response text that caused the error:", rawResponseText);
+    }
+
+    let errorMessage = "The AI failed to generate a valid configuration. Please check your inputs or try again.";
+    if (error instanceof SyntaxError) {
+      errorMessage = "The AI returned a response in an invalid format. Please try again.";
+    } else if (error instanceof Error) {
+        errorMessage = `Failed to generate configuration: ${error.message}`;
+    }
+    
+    throw new Error(errorMessage);
+  }
+};
