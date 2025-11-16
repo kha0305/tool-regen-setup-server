@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { ServerConfig } from '../types';
 import { SlidersHorizontal, LoaderCircle } from 'lucide-react';
 import { SUPPORTED_GAMES } from '../constants';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ServerConfigFormProps {
   onGenerate: (config: ServerConfig) => void;
@@ -9,11 +10,12 @@ interface ServerConfigFormProps {
 }
 
 const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoading }) => {
+  const { t } = useLanguage();
   const [selectedGame, setSelectedGame] = useState(SUPPORTED_GAMES[1]); // Default to Valheim
   const [customGameName, setCustomGameName] = useState('');
   const [serverName, setServerName] = useState('My Awesome Server');
   const [playerCount, setPlayerCount] = useState(10);
-  const [serverDescription, setServerDescription] = useState('A relaxed PvE server with slightly increased resource drop rates.');
+  const [serverDescription, setServerDescription] = useState('A chill PvE server with slightly boosted loot rates.');
   const [worldSeedOrMap, setWorldSeedOrMap] = useState('');
 
 
@@ -22,8 +24,7 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
     const gameName = selectedGame === 'other' ? customGameName : selectedGame;
 
     if (!gameName) {
-      // Basic validation in case the custom field is empty
-      alert('Please select or enter a game name.');
+      alert(t('form.validationAlert'));
       return;
     }
 
@@ -44,71 +45,71 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
       }
   };
 
-  const inputClasses = "w-full bg-slate-800 border border-slate-600 rounded-md px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition";
-  const labelClasses = "block text-sm font-medium text-slate-300 mb-1";
+  const inputClasses = "w-full bg-slate-900/60 backdrop-blur-sm border border-slate-700/80 rounded-md px-3 py-2 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition";
+  const labelClasses = "block text-sm font-medium text-slate-300 mb-2";
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-      <h2 className="text-xl font-bold mb-4 text-cyan-400 flex items-center">
-        <SlidersHorizontal className="w-6 h-6 mr-2" />
-        Server Configuration
+    <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-2xl shadow-black/20">
+      <h2 className="text-xl font-bold mb-6 text-cyan-400 flex items-center">
+        <SlidersHorizontal className="w-6 h-6 mr-3" />
+        {t('form.title')}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="gameName" className={labelClasses}>Game Name</label>
-          <select id="gameName" value={selectedGame} onChange={handleGameSelect} className={inputClasses} title="Select the game you want to create a server for. If your game isn't listed, choose 'Other'.">
+          <label htmlFor="gameName" className={labelClasses}>{t('form.gameNameLabel')}</label>
+          <select id="gameName" value={selectedGame} onChange={handleGameSelect} className={inputClasses} title={t('form.gameNameTooltip')}>
             {SUPPORTED_GAMES.map(game => (
                 <option key={game} value={game}>{game}</option>
             ))}
-            <option value="other">Other (Please specify)</option>
+            <option value="other">{t('form.gameOtherOption')}</option>
           </select>
         </div>
         
         {selectedGame === 'other' && (
-            <div className="animate-fade-in">
-                 <label htmlFor="customGameName" className={`${labelClasses} text-cyan-400`}>Custom Game Name</label>
+            <div className="animate-fade-in-up">
+                 <label htmlFor="customGameName" className={`${labelClasses} text-cyan-400`}>{t('form.customGameNameLabel')}</label>
                  <input 
                     type="text" 
                     id="customGameName" 
                     value={customGameName} 
                     onChange={e => setCustomGameName(e.target.value)} 
                     className={inputClasses} 
-                    placeholder="e.g., V Rising, 7 Days to Die" 
+                    placeholder={t('form.customGameNamePlaceholder')}
                     required 
                     autoFocus
-                    title="Enter the name of the game if it's not in the dropdown list."
+                    title={t('form.customGameNameTooltip')}
                  />
             </div>
         )}
         
         <div>
-          <label htmlFor="serverName" className={labelClasses}>Server Name</label>
-          <input type="text" id="serverName" value={serverName} onChange={e => setServerName(e.target.value)} className={inputClasses} required title="The name that will appear in the in-game server browser." />
+          <label htmlFor="serverName" className={labelClasses}>{t('form.serverNameLabel')}</label>
+          <input type="text" id="serverName" value={serverName} onChange={e => setServerName(e.target.value)} className={inputClasses} required title={t('form.serverNameTooltip')} />
         </div>
 
         <div>
-          <label htmlFor="playerCount" className={labelClasses}>Max Players ({playerCount})</label>
-          <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" title="Set the maximum number of players that can join the server at one time." />
+          <label htmlFor="playerCount" className={labelClasses}>{t('form.playerCountLabel', { count: playerCount })}</label>
+          <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" title={t('form.playerCountTooltip')} />
         </div>
 
         <div>
-          <label htmlFor="serverDescription" className={labelClasses}>Server Description, Mods & Rules</label>
-          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} placeholder="e.g., PvE focused, 2x loot, list any mods..." title="Describe your server's purpose. Mention any special rules, mods, or settings (e.g., PvE, 2x loot)."></textarea>
+          <label htmlFor="serverDescription" className={labelClasses}>{t('form.descriptionLabel')}</label>
+          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} placeholder={t('form.descriptionPlaceholder')} title={t('form.descriptionTooltip')}></textarea>
         </div>
 
         <div>
-          <label htmlFor="worldSeed" className={labelClasses}>World Seed / Map Name (Optional)</label>
-          <input type="text" id="worldSeed" value={worldSeedOrMap} onChange={e => setWorldSeedOrMap(e.target.value)} className={inputClasses} placeholder="Leave empty for random/default" title="Enter a specific seed for world generation or a map name. Leave blank for a random/default world." />
+          <label htmlFor="worldSeed" className={labelClasses}>{t('form.worldSeedLabel')}</label>
+          <input type="text" id="worldSeed" value={worldSeedOrMap} onChange={e => setWorldSeedOrMap(e.target.value)} className={inputClasses} placeholder={t('form.worldSeedPlaceholder')} title={t('form.worldSeedTooltip')} />
         </div>
 
-        <button type="submit" disabled={isLoading} className="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105">
+        <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg shadow-cyan-500/20">
           {isLoading ? (
             <>
               <LoaderCircle className="animate-spin w-5 h-5 mr-2" />
-              Generating...
+              {t('form.submitButtonLoading')}
             </>
           ) : (
-            'Generate Server Files'
+            t('form.submitButton')
           )}
         </button>
       </form>

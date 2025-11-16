@@ -3,15 +3,17 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import type { ServerConfig, GeneratedConfig } from '../types';
 
-export const generateServerConfig = async (config: ServerConfig): Promise<GeneratedConfig> => {
+export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'en'): Promise<GeneratedConfig> => {
   // The execution environment is expected to provide process.env.API_KEY.
   // We initialize the client directly as per the guidelines.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  const prompt = `
-    You are an expert game server administrator with knowledge of configuration files for a wide variety of PC games.
+  const explanationLanguage = lang === 'vi' ? 'Vietnamese' : 'English';
 
-    Based on the user's request, generate all necessary configuration files and a startup script.
+  const prompt = `
+    You are an expert game server administrator with knowledge of configuration files and hardware requirements for a wide variety of PC games.
+
+    Based on the user's request, generate all necessary configuration files, a startup script, and estimate the required RAM.
 
     User's Request:
     - Game: ${config.gameName}
@@ -23,8 +25,9 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
     Your Tasks:
     1.  Identify the correct file names and formats for the specified game (e.g., server.cfg, Game.ini, server-settings.json).
     2.  Generate the content for these files based on the user's request.
-    3.  Create a simple shell startup script (start.sh) for Linux. Assume the server executable is in the same directory. The script should allocate a reasonable amount of of resources for the game and player count and include a restart loop if applicable.
-    4.  Provide a brief, user-friendly explanation of the generated files and any next steps the user should take (e.g., "Place these files in your server's root directory and run 'chmod +x start.sh' before executing it.").
+    3.  Create a simple shell startup script (start.sh) for Linux. Assume the server executable is in the same directory. The script should allocate a reasonable amount of resources for the game and player count and include a restart loop if applicable.
+    4.  Provide a brief, user-friendly explanation of the generated files and any next steps the user should take. This explanation MUST be in ${explanationLanguage}.
+    5.  Estimate the recommended RAM in gigabytes (GB) for this server configuration. Consider the game, player count, and any mentioned mods. Return this as a single number.
 
     Return the output in the specified JSON format.
     `;
@@ -42,7 +45,7 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
           properties: {
             explanation: {
               type: Type.STRING,
-              description: "A brief, user-friendly explanation of the generated files and instructions for the user.",
+              description: `A brief, user-friendly explanation of the generated files and instructions for the user, in ${explanationLanguage}.`,
             },
             files: {
               type: Type.ARRAY,
@@ -61,9 +64,13 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
                 },
                 required: ["fileName", "fileContent"]
               }
+            },
+            recommendedRamGB: {
+              type: Type.NUMBER,
+              description: "Estimated recommended RAM in gigabytes (GB) for the server. Example: 8"
             }
           },
-          required: ["explanation", "files"],
+          required: ["explanation", "files", "recommendedRamGB"],
         },
       },
     });
@@ -71,7 +78,6 @@ export const generateServerConfig = async (config: ServerConfig): Promise<Genera
     rawResponseText = response.text;
     
     // When using responseSchema, the model returns a clean JSON string.
-    // The defensive cleaning for markdown backticks is not required.
     if (!rawResponseText) {
         throw new Error("The AI returned an empty response.");
     }

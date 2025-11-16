@@ -15,4 +15,5 @@ export interface GeneratedFile {
 export interface GeneratedConfig {
   files: GeneratedFile[];
   explanation: string;
+  recommendedRamGB?: number;
 }

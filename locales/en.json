@@ -1,0 +1,57 @@
+
+{
+  "header": {
+    "title": "AI Game Server Builder",
+    "subtitle": "Instantly generate your custom server files"
+  },
+  "form": {
+    "title": "Server Configuration",
+    "gameNameLabel": "Game Name",
+    "gameNameTooltip": "Select the game you want to create a server for. If your game is not listed, choose 'Other'.",
+    "gameOtherOption": "Other (Please specify)",
+    "customGameNameLabel": "Custom Game Name",
+    "customGameNamePlaceholder": "e.g., V Rising, 7 Days to Die",
+    "customGameNameTooltip": "Enter the game name if it's not in the dropdown list.",
+    "serverNameLabel": "Server Name",
+    "serverNameTooltip": "The name that will appear in the in-game server browser.",
+    "playerCountLabel": "Max Players ({count})",
+    "playerCountTooltip": "Set the maximum number of players that can join the server at once.",
+    "descriptionLabel": "Server Description, Mods & Rules",
+    "descriptionPlaceholder": "e.g., PvE focus, 2x loot, list of mods...",
+    "descriptionTooltip": "Describe the purpose of your server. Mention any rules, mods, or special settings (e.g., PvE, 2x loot).",
+    "worldSeedLabel": "World Seed / Map Name (Optional)",
+    "worldSeedPlaceholder": "Leave blank for random/default",
+    "worldSeedTooltip": "Enter a specific seed to generate a world or a map name. Leave blank for a random/default world.",
+    "submitButton": "Generate Server Files",
+    "submitButtonLoading": "Generating...",
+    "validationAlert": "Please select or enter a game name."
+  },
+  "results": {
+    "title": "Results",
+    "loadingTitle": "Generating your server files...",
+    "loadingSubtitle": "The AI is working on your configuration. Please wait.",
+    "errorTitle": "An Error Occurred",
+    "placeholder": "Server files and instructions will appear here.",
+    "explanationTitle": "Instructions",
+    "ramTitle": "Recommended RAM",
+    "ramUnit": "GB",
+    "selectFilesTitle": "Select files to download:",
+    "downloadZipButton": "Download {count} selected files as .ZIP",
+    "downloadZipButtonNoSelection": "Download files as .ZIP",
+    "downloadZipButtonLoading": "Creating ZIP...",
+    "zipAlert": "Please select at least one file to download."
+  },
+  "code": {
+    "copy": "Copy",
+    "copied": "Copied!",
+    "download": "Download"
+  },
+  "footer": {
+    "text": "Powered by the Google Gemini API. Built with React & Tailwind CSS."
+  },
+  "errors": {
+    "generateConfig": "Failed to generate configuration: {message}",
+    "zipCreate": "Failed to create ZIP file: {message}",
+    "unknown": "An unknown error occurred."
+  }
+}

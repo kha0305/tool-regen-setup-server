@@ -1,0 +1,57 @@
+
+{
+  "header": {
+    "title": "Trình tạo Máy chủ Game AI",
+    "subtitle": "Tạo tệp máy chủ tùy chỉnh của bạn ngay lập tức"
+  },
+  "form": {
+    "title": "Cấu hình Máy chủ",
+    "gameNameLabel": "Tên Game",
+    "gameNameTooltip": "Chọn game bạn muốn tạo máy chủ. Nếu game của bạn không có trong danh sách, chọn 'Khác'.",
+    "gameOtherOption": "Khác (Vui lòng ghi rõ)",
+    "customGameNameLabel": "Tên Game Tùy chỉnh",
+    "customGameNamePlaceholder": "ví dụ: V Rising, 7 Days to Die",
+    "customGameNameTooltip": "Nhập tên game nếu không có trong danh sách thả xuống.",
+    "serverNameLabel": "Tên Máy chủ",
+    "serverNameTooltip": "Tên sẽ xuất hiện trong trình duyệt máy chủ trong game.",
+    "playerCountLabel": "Số người chơi tối đa ({count})",
+    "playerCountTooltip": "Đặt số lượng người chơi tối đa có thể tham gia máy chủ cùng lúc.",
+    "descriptionLabel": "Mô tả, Mods & Luật lệ Máy chủ",
+    "descriptionPlaceholder": "ví dụ: Tập trung PvE, loot x2, liệt kê các mod...",
+    "descriptionTooltip": "Mô tả mục đích của máy chủ. Đề cập đến bất kỳ luật lệ, mod hoặc cài đặt đặc biệt nào (ví dụ: PvE, loot x2).",
+    "worldSeedLabel": "World Seed / Tên Bản đồ (Tùy chọn)",
+    "worldSeedPlaceholder": "Để trống để tạo ngẫu nhiên/mặc định",
+    "worldSeedTooltip": "Nhập một seed cụ thể để tạo thế giới hoặc tên bản đồ. Để trống cho thế giới ngẫu nhiên/mặc định.",
+    "submitButton": "Tạo tệp máy chủ",
+    "submitButtonLoading": "Đang tạo...",
+    "validationAlert": "Vui lòng chọn hoặc nhập tên game."
+  },
+  "results": {
+    "title": "Kết quả",
+    "loadingTitle": "Đang tạo tệp máy chủ của bạn...",
+    "loadingSubtitle": "AI đang xử lý cấu hình của bạn. Vui lòng đợi.",
+    "errorTitle": "Đã xảy ra lỗi",
+    "placeholder": "Các tệp máy chủ và hướng dẫn sẽ xuất hiện ở đây.",
+    "explanationTitle": "Hướng dẫn",
+    "ramTitle": "RAM Đề xuất",
+    "ramUnit": "GB",
+    "selectFilesTitle": "Chọn tệp để tải về:",
+    "downloadZipButton": "Tải {count} tệp đã chọn dưới dạng .ZIP",
+    "downloadZipButtonNoSelection": "Tải các tệp dưới dạng .ZIP",
+    "downloadZipButtonLoading": "Đang tạo ZIP...",
+    "zipAlert": "Vui lòng chọn ít nhất một tệp để tải xuống."
+  },
+  "code": {
+    "copy": "Sao chép",
+    "copied": "Đã sao chép!",
+    "download": "Tải xuống"
+  },
+  "footer": {
+    "text": "Phát triển bởi Google Gemini API. Xây dựng với React & Tailwind CSS."
+  },
+  "errors": {
+    "generateConfig": "Không thể tạo cấu hình: {message}",
+    "zipCreate": "Không thể tạo tệp ZIP: {message}",
+    "unknown": "Đã xảy ra lỗi không xác định."
+  }
+}
