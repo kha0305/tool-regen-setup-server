@@ -1,0 +1,5 @@
+{
+  "name": "Game Server Builder",
+  "description": "An AI-powered tool to automatically generate custom game server configuration files and startup scripts based on user-defined parameters.",
+  "requestFramePermissions": []
+}
