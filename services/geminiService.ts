@@ -1,110 +1,117 @@
 
-// FIX: Use named imports for GoogleGenAI and Type as per the guidelines.
-import { GoogleGenAI, Type } from '@google/genai';
 import type { ServerConfig, GeneratedConfig } from '../types';
+import { MOCK_GAME_DATA } from './mockData';
 
-export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'en'): Promise<GeneratedConfig> => {
-  // The execution environment is expected to provide process.env.API_KEY.
-  // We initialize the client directly as per the guidelines.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+/**
+ * Generates a generic, dynamic configuration for unsupported games.
+ */
+const generateGenericMockConfig = (config: ServerConfig, lang: 'vi' | 'en'): GeneratedConfig => {
+  const explanation = lang === 'vi' 
+    ? `Đây là cấu hình máy chủ giả lập cho game "${config.gameName}".\n\n- Tên máy chủ: ${config.serverName}\n- Số người chơi: ${config.playerCount}\n\nCác tệp đã được tạo dựa trên yêu cầu của bạn. Để bắt đầu, hãy tải các tệp xuống, đặt chúng vào thư mục gốc của máy chủ và chạy tệp 'start.sh' từ terminal của bạn.\n\nLưu ý: Đây là dữ liệu giả và không sử dụng API key.`
+    : `This is a mock server configuration for the game "${config.gameName}".\n\n- Server Name: ${config.serverName}\n- Player Count: ${config.playerCount}\n\nThe files have been generated based on your request. To get started, download the files, place them in your server's root directory, and execute the 'start.sh' script from your terminal.\n\nNote: This is mock data and does not use an API key.`;
 
-  const explanationLanguage = lang === 'vi' ? 'Vietnamese' : 'English';
+  const mockConfigFileContent = `
+# Mock configuration for ${config.gameName}
+# Generated for server: "${config.serverName}"
 
-  const prompt = `
-    You are an expert game server administrator with knowledge of configuration files and hardware requirements for a wide variety of PC games.
+server_name = "${config.serverName}"
+max_players = ${config.playerCount}
+world_seed = "${config.worldSeedOrMap || 'random-mock-seed'}"
+description = "${config.serverDescription}"
 
-    Based on the user's request, generate all necessary configuration files, a startup script, and estimate the required RAM.
+# --- Additional mock settings ---
+enable_pve = true
+difficulty = "normal"
+auto_save_interval_minutes = 15
+`.trim();
 
-    User's Request:
-    - Game: ${config.gameName}
-    - Server Name: ${config.serverName}
-    - Max Players: ${config.playerCount}
-    - World Seed / Map Name: ${config.worldSeedOrMap || 'default'}
-    - Description of desired server behavior (mods, rules, etc.): ${config.serverDescription || 'Standard configuration'}
+  const mockStartScriptContent = `#!/bin/bash
+# Mock startup script for ${config.gameName}
 
-    Your Tasks:
-    1.  Identify the correct file names and formats for the specified game (e.g., server.cfg, Game.ini, server-settings.json).
-    2.  Generate the content for these files based on the user's request.
-    3.  Create a simple shell startup script (start.sh) for Linux. Assume the server executable is in the same directory. The script should allocate a reasonable amount of resources for the game and player count and include a restart loop if applicable.
-    4.  Provide a brief, user-friendly explanation of the generated files and any next steps the user should take. This explanation MUST be in ${explanationLanguage}.
-    5.  Estimate the recommended RAM in gigabytes (GB) for this server configuration. Consider the game, player count, and any mentioned mods. Return this as a single number.
+echo "==============================================="
+echo "  STARTING MOCK SERVER: ${config.serverName}"
+echo "==============================================="
+echo "Game: ${config.gameName}"
+echo "Max Players: ${config.playerCount}"
+echo ""
+echo "NOTE: This is a mock script. In a real environment,"
+echo "you would execute the game's dedicated server binary here,"
+echo "e.g., './${config.gameName.toLowerCase().replace(/\\s/g, '_')}_server -config server.cfg'"
+echo ""
+echo "Server is now 'running'. Press Ctrl+C to stop."
 
-    Return the output in the specified JSON format.
-    `;
+# This command keeps the script running to simulate a server process
+tail -f /dev/null
+`.trim();
 
-  let rawResponseText = '';
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          // FIX: Use the Type enum for schema properties as per the guidelines.
-          type: Type.OBJECT,
-          properties: {
-            explanation: {
-              type: Type.STRING,
-              description: `A brief, user-friendly explanation of the generated files and instructions for the user, in ${explanationLanguage}.`,
-            },
-            files: {
-              type: Type.ARRAY,
-              description: "An array of generated file objects.",
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  fileName: {
-                    type: Type.STRING,
-                    description: "The name of the file, e.g., 'server.cfg' or 'start.sh'.",
-                  },
-                  fileContent: {
-                    type: Type.STRING,
-                    description: "The full text content of the file.",
-                  }
-                },
-                required: ["fileName", "fileContent"]
-              }
-            },
-            recommendedRamGB: {
-              type: Type.NUMBER,
-              description: "Estimated recommended RAM in gigabytes (GB) for the server. Example: 8"
-            }
-          },
-          required: ["explanation", "files", "recommendedRamGB"],
-        },
+  return {
+    explanation: explanation,
+    files: [
+      {
+        fileName: `server-settings.cfg`,
+        fileContent: mockConfigFileContent,
       },
-    });
+      {
+        fileName: "start.sh",
+        fileContent: mockStartScriptContent,
+      }
+    ],
+    recommendedRamGB: Math.max(4, Math.round(config.playerCount / 8 + 2)), 
+    recommendedCpu: "4+ Cores @ 3.0GHz+",
+    recommendedSsdGB: Math.max(20, 10 + Math.round(config.playerCount / 2)),
+  };
+};
 
-    rawResponseText = response.text;
-    
-    // When using responseSchema, the model returns a clean JSON string.
-    if (!rawResponseText) {
-        throw new Error("The AI returned an empty response.");
-    }
-    
-    const resultJson = JSON.parse(rawResponseText);
-    
-    // The schema is enforced by the model, but a simple check ensures robustness.
-    if (!resultJson.files || !resultJson.explanation) {
-        throw new Error("AI response is missing required fields (files or explanation).");
-    }
+/**
+ * Looks up pre-defined mock data for a given game and replaces placeholders with user config.
+ * Falls back to a generic generator if the game is not found.
+ */
+export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'en'): Promise<GeneratedConfig> => {
+  // Simulate a shorter delay for lookups
+  await new Promise(resolve => setTimeout(resolve, 800));
 
-    return resultJson as GeneratedConfig;
+  const gameKey = config.gameName.toLowerCase();
+  const gameTemplate = MOCK_GAME_DATA[gameKey];
 
-  } catch (error) {
-    console.error("Error calling or processing Gemini API response:", error);
-    // Log the raw text for better debugging.
-    if (rawResponseText) {
-        console.error("Raw response text that caused the error:", rawResponseText);
-    }
-
-    let errorMessage = "The AI failed to generate a valid configuration. Please check your inputs or try again.";
-    if (error instanceof SyntaxError) {
-      errorMessage = "The AI returned a response in an invalid format. Please try again.";
-    } else if (error instanceof Error) {
-        errorMessage = `Failed to generate configuration: ${error.message}`;
-    }
-    
-    throw new Error(errorMessage);
+  // If no specific template exists, use the generic fallback
+  if (!gameTemplate) {
+    return generateGenericMockConfig(config, lang);
   }
+
+  // A template exists, so process it.
+  const recommendedRam = Math.max(gameTemplate.recommendedRamGB, Math.round(config.playerCount / 10 + 2));
+  const recommendedSsd = Math.max(gameTemplate.recommendedSsdGB, 10 + config.playerCount);
+
+  // Define all possible placeholders and their replacement values
+  const replacements: Record<string, string> = {
+    '{{gameName}}': config.gameName,
+    '{{serverName}}': config.serverName,
+    '{{playerCount}}': String(config.playerCount),
+    '{{worldSeedOrMap}}': config.worldSeedOrMap || gameTemplate.defaultWorldName,
+    '{{serverDescription}}': config.serverDescription,
+    '{{recommendedRamGB}}': String(recommendedRam),
+  };
+
+  // Helper function to replace all placeholders in a string
+  const processTemplate = (templateString: string): string => {
+    let result = templateString;
+    for (const placeholder in replacements) {
+      result = result.replace(new RegExp(placeholder, 'g'), replacements[placeholder]);
+    }
+    return result;
+  };
+  
+  // Build the final configuration from the template
+  const finalConfig: GeneratedConfig = {
+    explanation: processTemplate(gameTemplate.explanation[lang]),
+    files: gameTemplate.files.map(file => ({
+      fileName: processTemplate(file.fileName),
+      fileContent: processTemplate(file.fileContent).trim(),
+    })),
+    recommendedRamGB: recommendedRam,
+    recommendedCpu: gameTemplate.recommendedCpu,
+    recommendedSsdGB: recommendedSsd,
+  };
+
+  return finalConfig;
 };

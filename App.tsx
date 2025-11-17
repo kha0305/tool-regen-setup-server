@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import type { GeneratedConfig, ServerConfig } from './types';
 import { generateServerConfig } from './services/geminiService';
 import Header from './components/Header';
 import ServerConfigForm from './components/ServerConfigForm';
 import CodeOutput from './components/CodeOutput';
-import { LoaderCircle, AlertTriangle, WandSparkles, Info, Archive, MemoryStick } from 'lucide-react';
+import { LoaderCircle, AlertTriangle, FileCode2, Info, Archive, MemoryStick, Shapes, ChevronDown, Cpu, HardDrive } from 'lucide-react';
 import JSZip from 'jszip';
 import { useLanguage } from './contexts/LanguageContext';
 
@@ -15,6 +16,7 @@ const App: React.FC = () => {
   const [generatedConfig, setGeneratedConfig] = useState<GeneratedConfig | null>(null);
   const [submittedConfig, setSubmittedConfig] = useState<ServerConfig | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<Record<string, boolean>>({});
+  const [isExplanationOpen, setIsExplanationOpen] = useState(true);
   const { language, t } = useLanguage();
 
   const handleGenerate = async (config: ServerConfig) => {
@@ -23,6 +25,7 @@ const App: React.FC = () => {
     setGeneratedConfig(null);
     setSubmittedConfig(config);
     setSelectedFiles({});
+    setIsExplanationOpen(true);
 
     try {
       const result = await generateServerConfig(config, language);
@@ -92,17 +95,17 @@ const App: React.FC = () => {
   const selectedCount = Object.values(selectedFiles).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-300">
+    <div className="min-h-screen bg-slate-950 text-slate-300">
       <Header />
       <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div className="lg:col-span-4">
             <ServerConfigForm onGenerate={handleGenerate} isLoading={isLoading} />
           </div>
-          <div className="lg:col-span-3">
-            <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-2xl shadow-black/20 h-full min-h-[400px] lg:min-h-0 flex flex-col">
+          <div className="lg:col-span-8">
+            <div className="glass-container rounded-2xl p-6 shadow-2xl shadow-black/20 h-full min-h-[400px] lg:min-h-0 flex flex-col">
               <h2 className="text-xl font-bold mb-4 text-cyan-400 flex items-center">
-                <WandSparkles className="w-6 h-6 mr-3" />
+                <FileCode2 className="w-6 h-6 mr-3" />
                 {t('results.title')}
               </h2>
               {isLoading && (
@@ -120,33 +123,80 @@ const App: React.FC = () => {
                 </div>
               )}
               {!isLoading && !error && !generatedConfig && (
-                 <div className="flex-grow flex flex-col items-center justify-center text-slate-500">
-                    <p>{t('results.placeholder')}</p>
+                 <div className="flex-grow flex flex-col items-center justify-center text-center text-slate-500 p-8">
+                    <Shapes className="w-16 h-16 mb-6 text-slate-700" />
+                    <h3 className="text-xl font-bold text-slate-300 mb-2">{t('results.initialPlaceholderTitle')}</h3>
+                    <p className="max-w-md text-slate-400">{t('results.initialPlaceholderSubtitle')}</p>
                  </div>
               )}
               {generatedConfig && (
                 <div className="space-y-6 animate-fade-in-up">
                     <div className="space-y-4">
                       {generatedConfig.explanation && (
-                        <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg p-4">
-                           <h3 className="font-bold text-sky-300 flex items-center mb-2 text-md">
-                             <Info className="w-5 h-5 mr-2" />
-                             {t('results.explanationTitle')}
-                           </h3>
-                           <p className="text-sm text-sky-200 whitespace-pre-wrap">{generatedConfig.explanation}</p>
+                        <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg transition-all duration-300">
+                          <button
+                            onClick={() => setIsExplanationOpen(prev => !prev)}
+                            className="w-full flex items-center justify-between p-4 text-left focus:outline-none focus:ring-2 focus:ring-sky-500/50 rounded-lg"
+                            aria-expanded={isExplanationOpen}
+                            aria-controls="explanation-panel"
+                          >
+                            <h3 className="font-bold text-sky-300 flex items-center text-md">
+                              <Info className="w-5 h-5 mr-2" />
+                              {t('results.explanationTitle')}
+                            </h3>
+                            <ChevronDown className={`w-5 h-5 text-sky-400 transition-transform duration-300 ${isExplanationOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                           <div
+                              id="explanation-panel"
+                              className={`transition-all duration-500 ease-in-out overflow-y-auto ${isExplanationOpen ? 'max-h-96' : 'max-h-0'}`}
+                            >
+                              <div className="px-4 pb-4">
+                                <p className="text-sm text-sky-200 whitespace-pre-wrap border-t border-sky-500/20 pt-3 mt-1 pr-2">{generatedConfig.explanation}</p>
+                              </div>
+                            </div>
                         </div>
                       )}
-                      {generatedConfig.recommendedRamGB && (
-                          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
-                              <h3 className="font-bold text-purple-300 flex items-center mb-2 text-md">
-                                  <MemoryStick className="w-5 h-5 mr-2"/>
-                                  {t('results.ramTitle')}
-                              </h3>
-                              <p className="text-3xl font-bold text-slate-200">
-                                  {generatedConfig.recommendedRamGB} <span className="text-lg font-medium text-purple-200">{t('results.ramUnit')}</span>
-                              </p>
-                          </div>
-                      )}
+
+                        {(generatedConfig.recommendedRamGB || generatedConfig.recommendedCpu || generatedConfig.recommendedSsdGB) && (
+                            <div>
+                                <h3 className="font-bold text-slate-300 mb-3 mt-2">{t('results.recommendationsTitle')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {generatedConfig.recommendedRamGB && (
+                                        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
+                                            <h4 className="font-bold text-purple-300 flex items-center mb-2 text-sm">
+                                                <MemoryStick className="w-4 h-4 mr-2"/>
+                                                {t('results.ramTitle')}
+                                            </h4>
+                                            <p className="text-2xl font-bold text-slate-200">
+                                                {generatedConfig.recommendedRamGB} <span className="text-base font-medium text-purple-200">{t('results.ramUnit')}</span>
+                                            </p>
+                                        </div>
+                                    )}
+                                    {generatedConfig.recommendedCpu && (
+                                        <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg p-4">
+                                            <h4 className="font-bold text-sky-300 flex items-center mb-2 text-sm">
+                                                <Cpu className="w-4 h-4 mr-2"/>
+                                                {t('results.cpuTitle')}
+                                            </h4>
+                                            <p className="text-base font-semibold text-slate-200 leading-tight">
+                                                {generatedConfig.recommendedCpu}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {generatedConfig.recommendedSsdGB && (
+                                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
+                                            <h4 className="font-bold text-emerald-300 flex items-center mb-2 text-sm">
+                                                <HardDrive className="w-4 h-4 mr-2"/>
+                                                {t('results.ssdTitle')}
+                                            </h4>
+                                            <p className="text-2xl font-bold text-slate-200">
+                                                {generatedConfig.recommendedSsdGB} <span className="text-base font-medium text-emerald-200">{t('results.ssdUnit')}</span>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                   {generatedConfig.files.length > 0 && (
