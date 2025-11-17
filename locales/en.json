@@ -24,7 +24,34 @@
     "worldSeedTooltip": "Enter a specific seed to generate a world or a map name. Leave blank for a random/default world.",
     "submitButton": "Generate Server Files",
     "submitButtonLoading": "Generating...",
-    "validationAlert": "Please select or enter a game name."
+    "validationAlert": "Please select or enter a game name.",
+    "advancedOptionsTitle": "Advanced Options",
+    "minecraft": {
+      "difficulty": "Difficulty",
+      "difficultyTooltip": "Sets the game's difficulty level.",
+      "options": {
+        "peaceful": "Peaceful",
+        "easy": "Easy",
+        "normal": "Normal",
+        "hard": "Hard"
+      },
+      "gameMode": "Game Mode",
+      "gameModeTooltip": "Sets the default game mode for players.",
+      "modes": {
+        "survival": "Survival",
+        "creative": "Creative",
+        "adventure": "Adventure"
+      },
+      "enablePvp": "Enable PvP",
+      "enablePvpTooltip": "Allows players to damage each other.",
+      "onlineMode": "Online Mode",
+      "onlineModeTooltip": "Requires players to be authenticated with Mojang servers. Disable for offline/cracked servers."
+    },
+    "valheim": {
+      "serverPassword": "Server Password",
+      "serverPasswordPlaceholder": "Keep empty for no password",
+      "serverPasswordTooltip": "Set a password to make your server private."
+    }
   },
   "results": {
     "title": "Generated Output",

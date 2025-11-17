@@ -5,6 +5,7 @@ export interface ServerConfig {
   playerCount: number;
   serverDescription: string;
   worldSeedOrMap: string;
+  advancedOptions?: Record<string, string | number | boolean>;
 }
 
 export interface GeneratedFile {

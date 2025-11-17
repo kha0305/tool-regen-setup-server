@@ -36,7 +36,7 @@ echo "Max Players: ${config.playerCount}"
 echo ""
 echo "NOTE: This is a mock script. In a real environment,"
 echo "you would execute the game's dedicated server binary here,"
-echo "e.g., './${config.gameName.toLowerCase().replace(/\\s/g, '_')}_server -config server.cfg'"
+echo "e.g., './${config.gameName.toLowerCase().replace(/\s/g, '_')}_server -config server.cfg'"
 echo ""
 echo "Server is now 'running'. Press Ctrl+C to stop."
 
@@ -67,9 +67,6 @@ tail -f /dev/null
  * Falls back to a generic generator if the game is not found.
  */
 export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'en'): Promise<GeneratedConfig> => {
-  // Simulate a shorter delay for lookups
-  await new Promise(resolve => setTimeout(resolve, 800));
-
   const gameKey = config.gameName.toLowerCase();
   const gameTemplate = MOCK_GAME_DATA[gameKey];
 
@@ -90,6 +87,16 @@ export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'e
     '{{worldSeedOrMap}}': config.worldSeedOrMap || gameTemplate.defaultWorldName,
     '{{serverDescription}}': config.serverDescription,
     '{{recommendedRamGB}}': String(recommendedRam),
+    
+    // Advanced options with defaults
+    // Minecraft
+    '{{minecraft_difficulty}}': String(config.advancedOptions?.minecraft_difficulty || 'easy'),
+    '{{minecraft_gamemode}}': String(config.advancedOptions?.minecraft_gamemode || 'survival'),
+    '{{minecraft_pvp}}': String(config.advancedOptions?.minecraft_pvp ?? true),
+    '{{minecraft_online_mode}}': String(config.advancedOptions?.minecraft_online_mode ?? true),
+
+    // Valheim
+    '{{valheim_password}}': String(config.advancedOptions?.valheim_password || 'secret'),
   };
 
   // Helper function to replace all placeholders in a string

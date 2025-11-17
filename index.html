@@ -175,6 +175,15 @@
   [data-theme='rainbow'] .hover\:to-purple-400:hover {
       filter: brightness(1.2);
   }
+
+  /* Custom utility to hide scrollbars */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 </style>
 </head>
   <body class="bg-slate-950 text-slate-300">

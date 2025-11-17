@@ -24,7 +24,34 @@
     "worldSeedTooltip": "Nhập một seed cụ thể để tạo thế giới hoặc tên bản đồ. Để trống cho thế giới ngẫu nhiên/mặc định.",
     "submitButton": "Tạo tệp máy chủ",
     "submitButtonLoading": "Đang tạo...",
-    "validationAlert": "Vui lòng chọn hoặc nhập tên game."
+    "validationAlert": "Vui lòng chọn hoặc nhập tên game.",
+    "advancedOptionsTitle": "Tùy chọn Nâng cao",
+    "minecraft": {
+      "difficulty": "Độ khó",
+      "difficultyTooltip": "Đặt mức độ khó của trò chơi.",
+      "options": {
+        "peaceful": "Hòa bình",
+        "easy": "Dễ",
+        "normal": "Bình thường",
+        "hard": "Khó"
+      },
+      "gameMode": "Chế độ chơi",
+      "gameModeTooltip": "Đặt chế độ chơi mặc định cho người chơi.",
+      "modes": {
+        "survival": "Sinh tồn",
+        "creative": "Sáng tạo",
+        "adventure": "Phiêu lưu"
+      },
+      "enablePvp": "Bật PvP",
+      "enablePvpTooltip": "Cho phép người chơi tấn công lẫn nhau.",
+      "onlineMode": "Chế độ Online",
+      "onlineModeTooltip": "Yêu cầu người chơi phải xác thực với máy chủ Mojang. Tắt đối với các máy chủ ngoại tuyến/lậu."
+    },
+    "valheim": {
+      "serverPassword": "Mật khẩu Máy chủ",
+      "serverPasswordPlaceholder": "Để trống nếu không có mật khẩu",
+      "serverPasswordTooltip": "Đặt mật khẩu để biến máy chủ của bạn thành riêng tư."
+    }
   },
   "results": {
     "title": "Kết quả",

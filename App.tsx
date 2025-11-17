@@ -148,10 +148,10 @@ const App: React.FC = () => {
                           </button>
                            <div
                               id="explanation-panel"
-                              className={`transition-all duration-500 ease-in-out overflow-y-auto ${isExplanationOpen ? 'max-h-96' : 'max-h-0'}`}
+                              className={`transition-all duration-500 ease-in-out overflow-y-auto no-scrollbar ${isExplanationOpen ? 'max-h-96' : 'max-h-0'}`}
                             >
                               <div className="px-4 pb-4">
-                                <p className="text-sm text-sky-200 whitespace-pre-wrap border-t border-sky-500/20 pt-3 mt-1 pr-2">{generatedConfig.explanation}</p>
+                                <p className="text-sm text-sky-200 whitespace-pre-wrap border-t border-sky-500/20 pt-3 mt-1">{generatedConfig.explanation}</p>
                               </div>
                             </div>
                         </div>

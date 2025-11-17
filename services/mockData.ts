@@ -36,9 +36,10 @@ motd={{serverName}}
 server-port=25565
 max-players={{playerCount}}
 level-seed={{worldSeedOrMap}}
-gamemode=survival
-difficulty=easy
-pvp=true
+gamemode={{minecraft_gamemode}}
+difficulty={{minecraft_difficulty}}
+pvp={{minecraft_pvp}}
+online-mode={{minecraft_online_mode}}
 enforce-whitelist=false
 view-distance=10
 `
@@ -66,8 +67,8 @@ java -Xmx{{recommendedRamGB}}G -Xms1G -jar server.jar nogui
   },
   'valheim': {
     explanation: {
-        vi: `Làm theo các bước sau để khởi chạy máy chủ **Valheim** của bạn:\n\n**1. Chuẩn bị:**\n   - Cài đặt **Valheim Dedicated Server** thông qua Steam hoặc SteamCMD.\n\n**2. Tìm thư mục cài đặt:**\n   - Xác định vị trí thư mục gốc nơi máy chủ Valheim của bạn được cài đặt.\n\n**3. Tải về và Đặt tệp:**\n   - Tải tệp \`start_server.sh\` đã tạo và đặt nó vào thư mục gốc đó (cùng chỗ với \`valheim_server.x86_64\`).\n\n**4. Cấp quyền:**\n   - Mở terminal trong thư mục máy chủ và chạy lệnh:\n   \`\`\`\n   chmod +x start_server.sh\n   \`\`\`\n\n**5. Khởi động máy chủ:**\n   - Chạy script bằng lệnh:\n   \`\`\`\n   ./start_server.sh\n   \`\`\`\n\n**QUAN TRỌNG:** Mở tệp \`start_server.sh\` và **thay đổi mật khẩu mặc định** "secret" thành một mật khẩu an toàn!`,
-        en: `Follow these steps to launch your **Valheim** server:\n\n**1. Prerequisites:**\n   - Install the **Valheim Dedicated Server** via Steam or SteamCMD.\n\n**2. Locate Directory:**\n   - Find the root directory where your Valheim server is installed.\n\n**3. Download & Place File:**\n   - Download the generated \`start_server.sh\` file and place it in that root directory (the same place as \`valheim_server.x86_64\`).\n\n**4. Make Executable:**\n   - Open a terminal in the server directory and run the command:\n   \`\`\`\n   chmod +x start_server.sh\n   \`\`\`\n\n**5. Launch the Server:**\n   - Execute the script with the command:\n   \`\`\`\n   ./start_server.sh\n   \`\`\`\n\n**IMPORTANT:** Edit the \`start_server.sh\` file and **change the default password** from "secret" to something secure!`,
+        vi: `Làm theo các bước sau để khởi chạy máy chủ **Valheim** của bạn:\n\n**1. Chuẩn bị:**\n   - Cài đặt **Valheim Dedicated Server** thông qua Steam hoặc SteamCMD.\n\n**2. Tìm thư mục cài đặt:**\n   - Xác định vị trí thư mục gốc nơi máy chủ Valheim của bạn được cài đặt.\n\n**3. Tải về và Đặt tệp:**\n   - Tải tệp \`start_server.sh\` đã tạo và đặt nó vào thư mục gốc đó (cùng chỗ với \`valheim_server.x86_64\`).\n\n**4. Cấp quyền:**\n   - Mở terminal trong thư mục máy chủ và chạy lệnh:\n   \`\`\`\n   chmod +x start_server.sh\n   \`\`\`\n\n**5. Khởi động máy chủ:**\n   - Chạy script bằng lệnh:\n   \`\`\`\n   ./start_server.sh\n   \`\`\`\n\n**QUAN TRỌNG:** Nếu bạn đã đặt mật khẩu, máy chủ của bạn là riêng tư. Nếu không, nó sẽ sử dụng mật khẩu mặc định "secret".`,
+        en: `Follow these steps to launch your **Valheim** server:\n\n**1. Prerequisites:**\n   - Install the **Valheim Dedicated Server** via Steam or SteamCMD.\n\n**2. Locate Directory:**\n   - Find the root directory where your Valheim server is installed.\n\n**3. Download & Place File:**\n   - Download the generated \`start_server.sh\` file and place it in that root directory (the same place as \`valheim_server.x86_64\`).\n\n**4. Make Executable:**\n   - Open a terminal in the server directory and run the command:\n   \`\`\`\n   chmod +x start_server.sh\n   \`\`\`\n\n**5. Launch the Server:**\n   - Execute the script with the command:\n   \`\`\`\n   ./start_server.sh\n   \`\`\`\n\n**IMPORTANT:** If you set a password, your server is private. If not, it will use the default "secret" password.`,
     },
     files: [
       {
@@ -85,9 +86,9 @@ echo "Starting Valheim server '{{serverName}}'..."
 # -name "{{serverName}}": The name of the server
 # -port 2456: The port for game traffic
 # -world "{{worldSeedOrMap}}": The name of the world
-# -password "secret": CHANGE THIS PASSWORD!
+# -password "{{valheim_password}}": Server password
 # -public 1: 1 for public, 0 for private
-./valheim_server.x86_64 -nographics -batchmode -name "{{serverName}}" -port 2456 -world "{{worldSeedOrMap}}" -password "secret" -public 1
+./valheim_server.x86_64 -nographics -batchmode -name "{{serverName}}" -port 2456 -world "{{worldSeedOrMap}}" -password "{{valheim_password}}" -public 1
 
 echo "Valheim server stopped."
 `
@@ -98,7 +99,7 @@ echo "Valheim server stopped."
     recommendedSsdGB: 10,
     defaultWorldName: 'MyWorld',
   },
-    'counter-strike 2': {
+  'counter-strike 2': {
     explanation: {
         vi: `Hướng dẫn thiết lập máy chủ **Counter-Strike 2**:\n\n**1. Chuẩn bị:**\n   - Cài đặt **CS2 Dedicated Server** bằng SteamCMD.\n\n**2. Tải về và Sắp xếp tệp:**\n   - Tải tệp \`start.sh\` và đặt nó vào thư mục gốc của máy chủ CS2.\n   - Tạo các thư mục \`csgo/cfg\` bên trong thư mục máy chủ của bạn.\n   - Đặt tệp \`gamemode_casual.cfg\` đã tải vào thư mục \`csgo/cfg\` vừa tạo.\n\n**3. Cấp quyền:**\n   - Mở terminal trong thư mục gốc của máy chủ và chạy lệnh:\n   \`\`\`\n   chmod +x start.sh\n   \`\`\`\n\n**4. Khởi động máy chủ:**\n   - Chạy máy chủ bằng lệnh:\n   \`\`\`\n   ./start.sh\n   \`\`\`\n\n**Tùy chỉnh:** Bạn có thể thay đổi bản đồ mặc định trong \`start.sh\` và điều chỉnh các quy tắc trong \`csgo/cfg/gamemode_casual.cfg\`.`,
         en: `Guide to setting up your **Counter-Strike 2** server:\n\n**1. Prerequisites:**\n   - Install the **CS2 Dedicated Server** using SteamCMD.\n\n**2. Download & Organize Files:**\n   - Download the \`start.sh\` file and place it in the root directory of your CS2 server.\n   - Create the folders \`csgo/cfg\` inside your server directory.\n   - Place the downloaded \`gamemode_casual.cfg\` file into the newly created \`csgo/cfg\` directory.\n\n**3. Make Executable:**\n   - Open a terminal in the server's root directory and run the command:\n   \`\`\`\n   chmod +x start.sh\n   \`\`\`\n\n**4. Launch the Server:**\n   - Run the server using the command:\n   \`\`\`\n   ./start.sh\n   \`\`\`\n\n**Customization:** You can change the default map in \`start.sh\` and adjust game mode rules in the \`csgo/cfg/gamemode_casual.cfg\` file.`,
@@ -142,5 +143,209 @@ echo "Casual server config loaded for '{{serverName}}'."
     recommendedCpu: "2+ Cores @ 3.4GHz+",
     recommendedSsdGB: 40,
     defaultWorldName: 'de_dust2',
+  },
+  'ark: survival evolved': {
+    explanation: {
+        vi: `Hướng dẫn thiết lập máy chủ **ARK: Survival Evolved**:\n\n**1. Chuẩn bị:**\n   - Cài đặt máy chủ ARK chuyên dụng bằng SteamCMD.\n\n**2. Tải về và Đặt tệp:**\n   - Tải tệp \`start.sh\` và đặt vào thư mục gốc của máy chủ (\`.../ShooterGame/Binaries/Linux/\`).\n\n**3. Cấp quyền:**\n   - Mở terminal trong thư mục đó và chạy lệnh: \`chmod +x start.sh\`\n\n**4. Khởi động máy chủ:**\n   - Chạy máy chủ với: \`./start.sh\`\n\n**Lưu ý:** Lần khởi động đầu tiên có thể mất nhiều thời gian. Cấu hình chi tiết hơn có thể được thực hiện trong tệp \`.../ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini\`.`,
+        en: `Guide to setting up your **ARK: Survival Evolved** server:\n\n**1. Prerequisites:**\n   - Install the ARK dedicated server using SteamCMD.\n\n**2. Download & Place File:**\n   - Download the \`start.sh\` file and place it in your server's root directory (\`.../ShooterGame/Binaries/Linux/\`).\n\n**3. Make Executable:**\n   - Open a terminal in that directory and run: \`chmod +x start.sh\`\n\n**4. Launch the Server:**\n   - Run the server with: \`./start.sh\`\n\n**Note:** The first launch can take a very long time. More detailed configuration can be done in the \`.../ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini\` file.`,
+    },
+    files: [
+      {
+        fileName: 'start.sh',
+        fileContent: `
+#!/bin/bash
+# ARK: Survival Evolved startup script
+
+echo "Starting ARK server '{{serverName}}'..."
+
+./ShooterGameServer {{worldSeedOrMap}}?listen?SessionName="{{serverName}}"?MaxPlayers={{playerCount}}?QueryPort=27015?Port=7777 -server -log
+`
+      }
+    ],
+    recommendedRamGB: 8,
+    recommendedCpu: "4+ Cores @ 3.4GHz+",
+    recommendedSsdGB: 40,
+    defaultWorldName: 'TheIsland',
+  },
+  'terraria': {
+    explanation: {
+      vi: `Hướng dẫn thiết lập máy chủ **Terraria**:\n\n**1. Chuẩn bị:**\n   - Tải xuống và giải nén tệp máy chủ Terraria từ trang web chính thức.\n\n**2. Tải về và Đặt tệp:**\n   - Tải \`serverconfig.txt\` và \`start.sh\` và đặt chúng vào cùng thư mục với tệp thực thi \`TerrariaServer.bin.x86_64\`.\n\n**3. Cấp quyền:**\n   - Mở terminal và chạy \`chmod +x start.sh\`.\n\n**4. Khởi động:**\n   - Chạy máy chủ bằng lệnh: \`./start.sh\`\n   - Lần đầu tiên, máy chủ sẽ tạo thế giới, quá trình này có thể mất một lúc.`,
+      en: `Guide to setting up your **Terraria** server:\n\n**1. Prerequisites:**\n   - Download and unzip the Terraria server files from the official website.\n\n**2. Download & Place Files:**\n   - Download \`serverconfig.txt\` and \`start.sh\` and place them in the same folder as the \`TerrariaServer.bin.x86_64\` executable.\n\n**3. Make Executable:**\n   - Open a terminal and run \`chmod +x start.sh\`.\n\n**4. Launch:**\n   - Run the server with: \`./start.sh\`\n   - The first time, it will generate the world, which may take a moment.`,
+    },
+    files: [
+      {
+        fileName: 'serverconfig.txt',
+        fileContent: `
+#Terraria server config file
+worldname={{worldSeedOrMap}}
+worldpath=Worlds
+maxplayers={{playerCount}}
+port=7777
+motd={{serverName}}
+worldsize=2
+difficulty=0
+`
+      },
+      {
+        fileName: 'start.sh',
+        fileContent: `
+#!/bin/bash
+echo "Starting Terraria server..."
+./TerrariaServer.bin.x86_64 -config serverconfig.txt
+`
+      }
+    ],
+    recommendedRamGB: 4,
+    recommendedCpu: "2+ Cores @ 2.8GHz+",
+    recommendedSsdGB: 5,
+    defaultWorldName: 'MyTerrariaWorld',
+  },
+  'left 4 dead 2': {
+    explanation: {
+      vi: `Hướng dẫn thiết lập máy chủ **Left 4 Dead 2**:\n\n**1. Chuẩn bị:**\n   - Cài đặt máy chủ L4D2 chuyên dụng bằng SteamCMD.\n\n**2. Tải về và Sắp xếp:**\n   - Đặt \`start.sh\` vào thư mục gốc của máy chủ.\n   - Đặt \`server.cfg\` vào thư mục \`left4dead2/cfg/\`.\n\n**3. Cấp quyền:**\n   - Trong terminal, chạy \`chmod +x start.sh\`.\n\n**4. Khởi động:**\n   - Chạy \`./start.sh\` để bắt đầu máy chủ.`,
+      en: `Guide to setting up your **Left 4 Dead 2** server:\n\n**1. Prerequisites:**\n   - Install the L4D2 dedicated server using SteamCMD.\n\n**2. Download & Organize:**\n   - Place \`start.sh\` in the server's root directory.\n   - Place \`server.cfg\` in the \`left4dead2/cfg/\` directory.\n\n**3. Make Executable:**\n   - In your terminal, run \`chmod +x start.sh\`.\n\n**4. Launch:**\n   - Run \`./start.sh\` to start the server.`,
+    },
+    files: [
+      {
+        fileName: 'start.sh',
+        fileContent: `
+#!/bin/bash
+# Left 4 Dead 2 startup script
+./srcds_run -game left4dead2 +exec server.cfg +map c1m1_hotel
+`
+      },
+      {
+        fileName: 'left4dead2/cfg/server.cfg',
+        fileContent: `
+hostname "{{serverName}}"
+sv_maxplayers {{playerCount}}
+sv_cheats 0
+sv_lan 0
+`
+      }
+    ],
+    recommendedRamGB: 4,
+    recommendedCpu: "2+ Cores @ 3.0GHz+",
+    recommendedSsdGB: 15,
+    defaultWorldName: 'c1m1_hotel',
+  },
+  'palworld': {
+    explanation: {
+      vi: `Hướng dẫn thiết lập máy chủ **Palworld**:\n\n**1. Chuẩn bị:**\n   - Cài đặt máy chủ Palworld chuyên dụng bằng SteamCMD.\n\n**2. Tải về và Đặt tệp:**\n   - Tải tệp \`start.sh\` và đặt nó vào thư mục gốc của máy chủ Palworld.\n\n**3. Cấu hình:**\n   - Chạy máy chủ một lần để tạo tệp \`PalWorldSettings.ini\`. Sau đó, dừng máy chủ.\n   - Sao chép \`DefaultPalWorldSettings.ini\` vào \`Pal/Saved/Config/LinuxServer/PalWorldSettings.ini\` và chỉnh sửa các cài đặt như \`ServerName\`, \`ServerDescription\`, v.v. để khớp với yêu cầu của bạn.\n\n**4. Cấp quyền và Khởi động:**\n   - Chạy \`chmod +x start.sh\` và sau đó \`./start.sh\` để khởi động máy chủ của bạn.`,
+      en: `Guide to setting up your **Palworld** server:\n\n**1. Prerequisites:**\n   - Install the Palworld dedicated server using SteamCMD.\n\n**2. Download & Place File:**\n   - Download the \`start.sh\` file and place it in your Palworld server root directory.\n\n**3. Configuration:**\n   - Run the server once to generate the \`PalWorldSettings.ini\` file. Then stop it.\n   - Copy \`DefaultPalWorldSettings.ini\` to \`Pal/Saved/Config/LinuxServer/PalWorldSettings.ini\` and edit settings like \`ServerName\`, \`ServerDescription\`, etc. to match your request.\n\n**4. Make Executable & Launch:**\n   - Run \`chmod +x start.sh\` and then \`./start.sh\` to launch your server.`,
+    },
+    files: [
+      {
+        fileName: 'start.sh',
+        fileContent: `
+#!/bin/bash
+echo "Starting Palworld Server..."
+# The server name and other settings are configured in PalWorldSettings.ini
+./PalServer.sh -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS
+`
+      }
+    ],
+    recommendedRamGB: 8,
+    recommendedCpu: "4+ Cores @ 3.5GHz+",
+    recommendedSsdGB: 30,
+    defaultWorldName: 'Default',
+  },
+  'factorio': {
+    explanation: {
+      vi: `Hướng dẫn thiết lập máy chủ **Factorio**:\n\n**1. Chuẩn bị:**\n   - Tải xuống phiên bản headless của Factorio từ trang web chính thức.\n\n**2. Tạo Lưu trữ:**\n   - Lần đầu tiên, tạo một bản lưu bằng lệnh: \`./bin/x64/factorio --create {{worldSeedOrMap}}.zip\`\n\n**3. Tải về và Đặt tệp:**\n   - Tải \`start.sh\` và \`server-settings.json\` và đặt chúng vào thư mục gốc của máy chủ Factorio.\n\n**4. Cấp quyền và Khởi động:**\n   - Chạy \`chmod +x start.sh\` và sau đó \`./start.sh\` để khởi động máy chủ.`,
+      en: `Guide to setting up your **Factorio** server:\n\n**1. Prerequisites:**\n   - Download the headless version of Factorio from the official website.\n\n**2. Create Save:**\n   - For the first time, create a save with: \`./bin/x64/factorio --create {{worldSeedOrMap}}.zip\`\n\n**3. Download & Place Files:**\n   - Download \`start.sh\` and \`server-settings.json\` and place them in the Factorio root directory.\n\n**4. Make Executable & Launch:**\n   - Run \`chmod +x start.sh\` and then \`./start.sh\` to launch the server.`,
+    },
+    files: [
+      {
+        fileName: 'start.sh',
+        fileContent: `
+#!/bin/bash
+./bin/x64/factorio --start-server {{worldSeedOrMap}}.zip --server-settings ./server-settings.json
+`
+      },
+      {
+        fileName: 'server-settings.json',
+        fileContent: `
+{
+  "name": "{{serverName}}",
+  "description": "{{serverDescription}}",
+  "tags": ["game", "factorio"],
+  "max_players": {{playerCount}},
+  "visibility": {
+    "public": true
+  },
+  "game_password": "",
+  "auto_pause": true
+}
+`
+      }
+    ],
+    recommendedRamGB: 4,
+    recommendedCpu: "2+ Cores @ 3.0GHz+",
+    recommendedSsdGB: 5,
+    defaultWorldName: 'factorio-save',
+  },
+  'project zomboid': {
+    explanation: {
+      vi: `Hướng dẫn thiết lập máy chủ **Project Zomboid**:\n\n**1. Chuẩn bị:**\n   - Cài đặt máy chủ Project Zomboid chuyên dụng bằng SteamCMD.\n\n**2. Tải về và Đặt tệp:**\n   - Tải \`start-server.sh\` đã tạo và đặt nó vào thư mục gốc của máy chủ, ghi đè lên tệp hiện có.\n\n**3. Cấu hình:**\n   - Máy chủ được cấu hình thông qua các tệp \`.ini\` trong \`~/Zomboid/Server/\`. Lệnh khởi động chỉ đặt tên máy chủ. Chỉnh sửa \`ServerTest.ini\` để thay đổi số lượng người chơi và các cài đặt khác.\n\n**4. Khởi động:**\n   - Chạy \`./start-server.sh\` để bắt đầu.`,
+      en: `Guide to setting up your **Project Zomboid** server:\n\n**1. Prerequisites:**\n   - Install the Project Zomboid dedicated server using SteamCMD.\n\n**2. Download & Place File:**\n   - Download the generated \`start-server.sh\` and place it in your server's root directory, overwriting the existing one.\n\n**3. Configuration:**\n   - The server is configured via \`.ini\` files in \`~/Zomboid/Server/\`. The start command only sets the server name. Edit \`ServerTest.ini\` to change player count and other settings.\n\n**4. Launch:**\n   - Run \`./start-server.sh\` to begin.`,
+    },
+    files: [
+      {
+        fileName: 'start-server.sh',
+        fileContent: `
+#!/bin/bash
+DIR="$( cd "$( dirname "\${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# This script is a wrapper. Server settings are primarily in the .ini files.
+"$DIR/jre64/bin/java" -Xmx{{recommendedRamGB}}g -jar "$DIR/server.jar" -servername "{{serverName}}"
+`
+      }
+    ],
+    recommendedRamGB: 6,
+    recommendedCpu: "4+ Cores @ 3.0GHz+",
+    recommendedSsdGB: 15,
+    defaultWorldName: 'Muldraugh, KY',
+  },
+  "don't starve together": {
+    explanation: {
+      vi: `Thiết lập máy chủ **Don't Starve Together** phức tạp:\n\n**1. Chuẩn bị:**\n   - Cài đặt máy chủ DST chuyên dụng bằng SteamCMD.\n\n**2. Cấu trúc thư mục:**\n   - Tạo một thư mục cluster, ví dụ: \`~/.klei/DoNotStarveTogether/MyDSTServer\`. Đặt tệp \`cluster.ini\` đã tạo vào đó.\n   - Tạo một thư mục con \`Master\` bên trong \`MyDSTServer\` và đặt tệp \`server.ini\` vào đó.\n\n**3. Token Cluster:**\n   - Bạn phải tạo một token cluster trong game và thêm nó vào \`cluster.ini\`.\n\n**4. Khởi động:**\n   - Chạy máy chủ từ thư mục \`bin\` của DST: \`./dontstarve_dedicated_server_nullrenderer -cluster MyDSTServer -shard Master\``,
+      en: `Setting up a **Don't Starve Together** server is complex:\n\n**1. Prerequisites:**\n   - Install the DST dedicated server using SteamCMD.\n\n**2. Directory Structure:**\n   - Create a cluster directory, e.g., \`~/.klei/DoNotStarveTogether/MyDSTServer\`. Place the generated \`cluster.ini\` there.\n   - Create a \`Master\` subdirectory inside \`MyDSTServer\` and place \`server.ini\` inside it.\n\n**3. Cluster Token:**\n   - You must generate a cluster token in-game and add it to your \`cluster.ini\`.\n\n**4. Launch:**\n   - Run the server from the DST \`bin\` directory: \`./dontstarve_dedicated_server_nullrenderer -cluster MyDSTServer -shard Master\``,
+    },
+    files: [
+      {
+        fileName: 'cluster.ini',
+        fileContent: `
+[GAMEPLAY]
+game_mode = survival
+max_players = {{playerCount}}
+pvp = false
+pause_when_empty = true
+
+[NETWORK]
+cluster_name = {{serverName}}
+cluster_description = {{serverDescription}}
+cluster_password = 
+cluster_intention = cooperative
+`
+      },
+      {
+        fileName: 'server.ini',
+        fileContent: `
+[NETWORK]
+server_port = 10999
+
+[SHARD]
+is_master = true
+
+[STEAM]
+master_server_port = 27018
+authentication_port = 8768
+`
+      }
+    ],
+    recommendedRamGB: 4,
+    recommendedCpu: "2+ Cores @ 3.0GHz+",
+    recommendedSsdGB: 10,
+    defaultWorldName: 'survival',
   },
 };
