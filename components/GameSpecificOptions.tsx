@@ -119,11 +119,37 @@ const GameSpecificOptions: React.FC<GameSpecificOptionsProps> = ({ game, options
     </div>
   );
 
+  const renderDiscordBotOptions = () => (
+    <div className="animate-fade-in-up">
+      <div className="flex items-center text-sm text-slate-400 mb-3 mt-1">
+        <div className="flex-grow border-t border-slate-700"></div>
+        <span className="flex-shrink mx-4 font-semibold">{t('form.advancedOptionsTitle')}</span>
+        <div className="flex-grow border-t border-slate-700"></div>
+      </div>
+      <div>
+        <div className="flex items-center mb-2">
+          <label htmlFor="discord_client_id" className={labelClasses}>{t('form.discordBot.clientIdLabel')}</label>
+          <Tooltip text={t('form.discordBot.clientIdTooltip')} />
+        </div>
+        <input 
+            type="text" 
+            id="discord_client_id" 
+            value={options.discord_client_id || ''}
+            onChange={(e) => onChange('discord_client_id', e.target.value)}
+            className={inputClasses} 
+            placeholder={t('form.discordBot.clientIdPlaceholder')}
+        />
+      </div>
+    </div>
+  );
+
   switch (game) {
     case 'Minecraft':
       return renderMinecraftOptions();
     case 'Valheim':
       return renderValheimOptions();
+    case 'Discord Bot':
+      return renderDiscordBotOptions();
     default:
       return null;
   }

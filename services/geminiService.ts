@@ -81,10 +81,13 @@ export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'e
   const recommendedRam = Math.max(gameTemplate.recommendedRamGB, Math.round(config.playerCount / 10 + 2));
   const recommendedSsd = Math.max(gameTemplate.recommendedSsdGB, 10 + config.playerCount);
 
+  const slugify = (str: string) => str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
   // Define all possible placeholders and their replacement values
   const replacements: Record<string, string> = {
     '{{gameName}}': config.gameName,
     '{{serverName}}': config.serverName,
+    '{{serverNameSlug}}': slugify(config.serverName),
     '{{playerCount}}': String(config.playerCount),
     '{{serverPort}}': String(config.serverPort),
     '{{worldSeedOrMap}}': config.worldSeedOrMap || gameTemplate.defaultWorldName,
@@ -101,6 +104,9 @@ export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'e
 
     // Valheim
     '{{valheim_password}}': String(config.advancedOptions?.valheim_password || 'secret'),
+
+    // Discord Bot
+    '{{discord_client_id}}': String(config.advancedOptions?.discord_client_id || 'YOUR_CLIENT_ID_HERE'),
   };
 
   // Helper function to replace all placeholders in a string

@@ -17,10 +17,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if (['dark', 'light', 'rainbow'].includes(storedTheme)) {
             return storedTheme;
         }
-        return 'dark';
+        return 'light';
     } catch (error) {
         console.warn('Could not read theme from localStorage.', error);
-        return 'dark';
+        return 'light';
     }
   });
 

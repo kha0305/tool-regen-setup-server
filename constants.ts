@@ -2,6 +2,7 @@
 
 export const SUPPORTED_GAMES = [
   'Minecraft',
+  'Discord Bot',
   'Valheim',
   'Counter-Strike 2',
   'ARK: Survival Evolved',

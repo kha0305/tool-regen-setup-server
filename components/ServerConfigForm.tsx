@@ -134,6 +134,8 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
   const dropdownRef = useRef<HTMLDivElement>(null);
   const jarDropdownRef = useRef<HTMLDivElement>(null);
   
+  const isDiscordBot = selectedGame === 'Discord Bot';
+
   useEffect(() => {
     const fetchJarVersions = async () => {
         if (selectedGame !== 'Minecraft') return;
@@ -276,22 +278,39 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
       switch(game) {
           case 'Minecraft':
               setServerPort(25565);
+              setServerName('My Awesome Server');
+              setServerDescription('A chill PvE server with slightly boosted loot rates.');
               break;
           case 'Valheim':
               setServerPort(2456);
+              setServerName('Odin\'s Rest');
+              setServerDescription('A private Valheim server for friends.');
               break;
           case 'Terraria':
               setServerPort(7777);
+              setServerName('The Corruption Zone');
+              setServerDescription('Exploring and building in a new world!');
               break;
           case 'Counter-Strike 2':
           case 'Left 4 Dead 2':
               setServerPort(27015);
+              setServerName('Headshot Heaven');
+              setServerDescription('Casual 5v5 matches.');
               break;
           case 'ARK: Survival Evolved':
               setServerPort(7777);
+              setServerName('Dino Island');
+              setServerDescription('Taming dinos on The Island.');
+              break;
+          case 'Discord Bot':
+              setServerPort(0); // Not applicable
+              setServerName('MyCoolBot');
+              setServerDescription('with code in VS Code');
               break;
           default:
               setServerPort(7777); // Generic default
+              setServerName('Our Awesome Game Server');
+              setServerDescription('A new server awaiting adventures.');
       }
   };
   
@@ -467,73 +486,84 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
         
         <div>
           <div className="flex items-center mb-2">
-            <label htmlFor="serverName" className={labelClasses}>{t('form.serverNameLabel')}</label>
-            <Tooltip text={t('form.serverNameTooltip')} />
+            <label htmlFor="serverName" className={labelClasses}>
+              {isDiscordBot ? t('form.botNameLabel') : t('form.serverNameLabel')}
+            </label>
+            <Tooltip text={isDiscordBot ? t('form.botNameTooltip') : t('form.serverNameTooltip')} />
           </div>
           <input type="text" id="serverName" value={serverName} onChange={e => setServerName(e.target.value)} className={inputClasses} required />
         </div>
 
-        <div>
-          <div className="flex items-center mb-2">
-            <label htmlFor="playerCount" className={labelClasses}>{t('form.playerCountLabel', { count: playerCount })}</label>
-            <Tooltip text={t('form.playerCountTooltip')} />
-          </div>
-          <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
-        </div>
-        
-        <div>
-          <div className="flex items-center mb-2">
-            <label htmlFor="serverPort" className={labelClasses}>{t('form.serverPortLabel')}</label>
-            <Tooltip text={t('form.serverPortTooltip')} />
-          </div>
-          <input 
-            type="number" 
-            id="serverPort" 
-            min="1024"
-            max="65535"
-            value={serverPort} 
-            onChange={e => setServerPort(parseInt(e.target.value, 10))} 
-            className={inputClasses} 
-            required 
-          />
-        </div>
+        {!isDiscordBot && (
+          <>
+            <div className="animate-fade-in-up">
+              <div className="flex items-center mb-2">
+                <label htmlFor="playerCount" className={labelClasses}>{t('form.playerCountLabel', { count: playerCount })}</label>
+                <Tooltip text={t('form.playerCountTooltip')} />
+              </div>
+              <input type="range" id="playerCount" min="2" max="200" step="1" value={playerCount} onChange={e => setPlayerCount(parseInt(e.target.value, 10))} className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
+            </div>
+            
+            <div className="animate-fade-in-up">
+              <div className="flex items-center mb-2">
+                <label htmlFor="serverPort" className={labelClasses}>{t('form.serverPortLabel')}</label>
+                <Tooltip text={t('form.serverPortTooltip')} />
+              </div>
+              <input 
+                type="number" 
+                id="serverPort" 
+                min="1024"
+                max="65535"
+                value={serverPort} 
+                onChange={e => setServerPort(parseInt(e.target.value, 10))} 
+                className={inputClasses} 
+                required 
+              />
+            </div>
+          </>
+        )}
 
         <div>
            <div className="flex items-center mb-2">
-            <label htmlFor="serverDescription" className={labelClasses}>{t('form.descriptionLabel')}</label>
-            <Tooltip text={t('form.descriptionTooltip')} />
+            <label htmlFor="serverDescription" className={labelClasses}>
+              {isDiscordBot ? t('form.botActivityLabel') : t('form.descriptionLabel')}
+            </label>
+            <Tooltip text={isDiscordBot ? t('form.botActivityTooltip') : t('form.descriptionTooltip')} />
           </div>
-          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} placeholder={t('form.descriptionPlaceholder')}></textarea>
+          <textarea id="serverDescription" value={serverDescription} onChange={e => setServerDescription(e.target.value)} className={`${inputClasses} h-24`} 
+            placeholder={isDiscordBot ? t('form.botActivityPlaceholder') : t('form.descriptionPlaceholder')}></textarea>
         </div>
 
-        <div>
-           <div className="flex items-center mb-2">
-            <label htmlFor="worldSeed" className={labelClasses}>{t('form.worldSeedLabel')}</label>
-            <Tooltip text={t('form.worldSeedTooltip')} />
-          </div>
-           <div className="relative">
-            <input 
-                type="text" 
-                id="worldSeed" 
-                value={worldSeedOrMap} 
-                onChange={e => setWorldSeedOrMap(e.target.value)} 
-                className={`${inputClasses} pr-12`} 
-                placeholder={t('form.worldSeedPlaceholder')} 
-            />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                <Tooltip text={t('form.randomizeSeedTooltip')}>
-                    <button
-                        type="button"
-                        onClick={handleRandomizeSeed}
-                        className="p-1.5 text-slate-400 hover:text-cyan-400 transition-colors rounded-full hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-                        aria-label={t('form.randomizeSeedTooltip')}
-                    >
-                        <Dices className="w-5 h-5" />
-                    </button>
-                </Tooltip>
+        {!isDiscordBot && (
+          <div className="animate-fade-in-up">
+            <div className="flex items-center mb-2">
+              <label htmlFor="worldSeed" className={labelClasses}>{t('form.worldSeedLabel')}</label>
+              <Tooltip text={t('form.worldSeedTooltip')} />
+            </div>
+            <div className="relative">
+              <input 
+                  type="text" 
+                  id="worldSeed" 
+                  value={worldSeedOrMap} 
+                  onChange={e => setWorldSeedOrMap(e.target.value)} 
+                  className={`${inputClasses} pr-12`} 
+                  placeholder={t('form.worldSeedPlaceholder')} 
+              />
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                  <Tooltip text={t('form.randomizeSeedTooltip')}>
+                      <button
+                          type="button"
+                          onClick={handleRandomizeSeed}
+                          className="p-1.5 text-slate-400 hover:text-cyan-400 transition-colors rounded-full hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                          aria-label={t('form.randomizeSeedTooltip')}
+                      >
+                          <Dices className="w-5 h-5" />
+                      </button>
+                  </Tooltip>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <GameSpecificOptions 
             game={selectedGame}

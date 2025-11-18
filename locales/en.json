@@ -14,6 +14,11 @@
     "customGameNameTooltip": "Enter the game name if it's not in the dropdown list.",
     "serverNameLabel": "Server Name",
     "serverNameTooltip": "The name that will appear in the in-game server browser.",
+    "botNameLabel": "Bot Name",
+    "botNameTooltip": "The name of your Discord bot application.",
+    "botActivityLabel": "Bot Activity Message",
+    "botActivityPlaceholder": "e.g., Playing with code!",
+    "botActivityTooltip": "The status message that will appear under your bot's name on Discord.",
     "playerCountLabel": "Max Players ({count})",
     "playerCountTooltip": "Set the maximum number of players that can join the server at once.",
     "serverPortLabel": "Server Port",
@@ -72,6 +77,11 @@
       "serverPassword": "Server Password",
       "serverPasswordPlaceholder": "Keep empty for no password",
       "serverPasswordTooltip": "Set a password to make your server private."
+    },
+    "discordBot": {
+      "clientIdLabel": "Application (Client) ID",
+      "clientIdPlaceholder": "Paste your bot's client ID here",
+      "clientIdTooltip": "Find this on the 'General Information' page of your application in the Discord Developer Portal. It's required for registering slash commands."
     },
     "notifications": {
       "title": "Notifications",

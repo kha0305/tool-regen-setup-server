@@ -14,6 +14,11 @@
     "customGameNameTooltip": "Nhập tên game nếu không có trong danh sách thả xuống.",
     "serverNameLabel": "Tên Máy chủ",
     "serverNameTooltip": "Tên sẽ xuất hiện trong trình duyệt máy chủ trong game.",
+    "botNameLabel": "Tên Bot",
+    "botNameTooltip": "Tên ứng dụng bot Discord của bạn.",
+    "botActivityLabel": "Trạng thái Hoạt động của Bot",
+    "botActivityPlaceholder": "ví dụ: Đang chơi với code!",
+    "botActivityTooltip": "Tin nhắn trạng thái sẽ xuất hiện dưới tên bot của bạn trên Discord.",
     "playerCountLabel": "Số người chơi tối đa ({count})",
     "playerCountTooltip": "Đặt số lượng người chơi tối đa có thể tham gia máy chủ cùng lúc.",
     "serverPortLabel": "Cổng Máy chủ",
@@ -72,6 +77,11 @@
       "serverPassword": "Mật khẩu Máy chủ",
       "serverPasswordPlaceholder": "Để trống nếu không có mật khẩu",
       "serverPasswordTooltip": "Đặt mật khẩu để biến máy chủ của bạn thành riêng tư."
+    },
+    "discordBot": {
+      "clientIdLabel": "ID Ứng dụng (Client)",
+      "clientIdPlaceholder": "Dán ID client của bot vào đây",
+      "clientIdTooltip": "Tìm ID này trên trang 'General Information' của ứng dụng trong Discord Developer Portal. ID này cần thiết để đăng ký các lệnh slash."
     },
      "notifications": {
       "title": "Thông báo",
