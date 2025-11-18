@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import Tooltip from './Tooltip';
@@ -76,6 +77,18 @@ const GameSpecificOptions: React.FC<GameSpecificOptionsProps> = ({ game, options
                 />
                 <span className={labelClasses}>{t('form.minecraft.onlineMode')}</span>
                 <Tooltip text={t('form.minecraft.onlineModeTooltip')} />
+            </label>
+        </div>
+        <div>
+            <label className="flex items-center space-x-3 cursor-pointer">
+                <input 
+                    type="checkbox"
+                    checked={options.minecraft_enforce_whitelist ?? false}
+                    onChange={(e) => onChange('minecraft_enforce_whitelist', e.target.checked)}
+                    className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500 transition"
+                />
+                <span className={labelClasses}>{t('form.minecraft.enforceWhitelist')}</span>
+                <Tooltip text={t('form.minecraft.enforceWhitelistTooltip')} />
             </label>
         </div>
       </div>

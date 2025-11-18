@@ -17,7 +17,7 @@ const Tooltip: React.FC<{ text: string; children?: ReactNode }> = ({ text, child
     // This is a more robust way to create a tooltip without adding extra divs
     // that could interfere with layout (e.g., flexbox or grid contexts).
     return (
-      <div className="relative inline-block w-full">
+      <div className="relative inline-block">
         {cloneElement(child, { className: `${child.props.className || ''} group` })}
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[250px] p-2 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
           {text}

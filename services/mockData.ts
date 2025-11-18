@@ -40,7 +40,7 @@ gamemode={{minecraft_gamemode}}
 difficulty={{minecraft_difficulty}}
 pvp={{minecraft_pvp}}
 online-mode={{minecraft_online_mode}}
-enforce-whitelist=false
+enforce-whitelist={{minecraft_enforce_whitelist}}
 view-distance=10
 `
       },

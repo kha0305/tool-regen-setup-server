@@ -97,6 +97,7 @@ export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'e
     '{{minecraft_gamemode}}': String(config.advancedOptions?.minecraft_gamemode || 'survival'),
     '{{minecraft_pvp}}': String(config.advancedOptions?.minecraft_pvp ?? true),
     '{{minecraft_online_mode}}': String(config.advancedOptions?.minecraft_online_mode ?? true),
+    '{{minecraft_enforce_whitelist}}': String(config.advancedOptions?.minecraft_enforce_whitelist ?? false),
 
     // Valheim
     '{{valheim_password}}': String(config.advancedOptions?.valheim_password || 'secret'),

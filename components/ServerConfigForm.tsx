@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ServerConfig, JarVersion } from '../types';
 import { Settings2, LoaderCircle, ChevronDown, Bell, Dices, Download, Check, AlertTriangle, Link2 } from 'lucide-react';
@@ -26,15 +27,20 @@ const useJarDownloader = () => {
         setLinkCopied(false);
 
         try {
-            const newWindow = window.open(jar.url, '_blank', 'noopener,noreferrer');
-            if (newWindow) {
-                setDownloadState('success');
-                setTimeout(() => setDownloadState('idle'), 3000);
-            } else {
-                console.error('Download window blocked, likely by a pop-up blocker.');
-                setDownloadError(t('form.minecraft.downloadError'));
-                setDownloadState('idle');
-            }
+            const link = document.createElement('a');
+            link.href = jar.url;
+            
+            const fileName = jar.url.split('/').pop() || 'server.jar';
+            link.setAttribute('download', fileName);
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setDownloadState('success');
+            setTimeout(() => setDownloadState('idle'), 3000);
         } catch (error) {
             console.error('Failed to initiate server JAR download:', error);
             setDownloadError(t('form.minecraft.downloadError'));
@@ -141,37 +147,54 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
                 throw new Error(`API responded with status ${response.status}`);
             }
             const data = await response.json();
-
-            const versionLimit = 15;
-            const processedVersions: Record<string, JarVersion[]> = {};
             
-            const typesToFetch = ['vanilla', 'paper', 'spigot', 'purpur'];
-            typesToFetch.forEach(type => {
-                if (data[type] && data[type].length > 0) {
-                    processedVersions[type] = data[type].slice(0, versionLimit).map((v: any) => ({ 
-                        version: v.version, 
-                        url: v.url, 
-                        type: type 
-                    }));
-                }
-            });
+            const finalVersions: Record<string, JarVersion[]> = {};
+            const types = ['vanilla', 'paper', 'spigot', 'purpur'];
 
-            // Merge with fallback/legacy versions to ensure they are always available
-            const finalVersions: Record<string, JarVersion[]> = { ...processedVersions };
-            Object.entries(FALLBACK_JAR_VERSIONS).forEach(([type, fallbackList]) => {
-                if (!finalVersions[type]) {
-                    finalVersions[type] = [];
+            for (const type of types) {
+                // Use a Map to ensure unique versions, prioritizing the fallback list.
+                const versionMap = new Map<string, JarVersion>();
+
+                // 1. Add all fallback versions first to prioritize them.
+                const fallbackList = FALLBACK_JAR_VERSIONS[type] || [];
+                if (Array.isArray(fallbackList)) {
+                    fallbackList.forEach(jar => versionMap.set(jar.version, jar));
                 }
-                const existingVersions = new Set(finalVersions[type].map(v => v.version));
-                fallbackList.forEach(fallbackJar => {
-                    if (!existingVersions.has(fallbackJar.version)) {
-                        finalVersions[type].push(fallbackJar);
-                        existingVersions.add(fallbackJar.version);
+
+                // 2. Add new versions from the API if they don't already exist.
+                const apiList = (data as any)?.[type];
+                if (Array.isArray(apiList)) {
+                    apiList.forEach((v: any) => {
+                        if (v.version && v.url && !versionMap.has(v.version)) {
+                            versionMap.set(v.version, { version: v.version, url: v.url, type });
+                        }
+                    });
+                }
+
+                // 3. Convert map values back to an array.
+                const versions = Array.from(versionMap.values());
+                
+                // 4. Sort versions descending for better UX.
+                versions.sort((a, b) => {
+                    const aParts = a.version.split(/[.-]/).map(p => parseInt(p, 10)).filter(Number.isFinite);
+                    const bParts = b.version.split(/[.-]/).map(p => parseInt(p, 10)).filter(Number.isFinite);
+                    const len = Math.max(aParts.length, bParts.length);
+                    for (let i = 0; i < len; i++) {
+                        const aVal = aParts[i] || 0;
+                        const bVal = bParts[i] || 0;
+                        if (aVal !== bVal) {
+                            return bVal - aVal; // Sort descending
+                        }
                     }
+                    // If numeric parts are identical, use localeCompare on the full string for stability
+                    return b.version.localeCompare(a.version);
                 });
-            });
-
+                
+                finalVersions[type] = versions;
+            }
+            
             setJarVersions(finalVersions);
+
         } catch (error) {
             console.error('Failed to fetch live jar versions, using fallback:', error);
             setJarVersions(FALLBACK_JAR_VERSIONS);
@@ -351,7 +374,12 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
                                 </div>
                             )}
                             {!isFetchingJars && Object.keys(jarVersions).length > 0 &&
-                            Object.entries(jarVersions).map(([type, versions]) => (
+                            Object.entries(jarVersions).map(([type, versions]) => {
+                                // FIX: Add a type guard to ensure `versions` is an array. This resolves a TypeScript
+                                // error where `versions` could be inferred as `unknown`.
+                                if (!Array.isArray(versions)) return null;
+
+                                return (
                                 <div key={type}>
                                     <div className="p-2 text-xs font-semibold text-slate-400 border-b border-slate-700 sticky top-0 bg-slate-900/80 backdrop-blur-sm">{JAR_TYPE_TITLES[type] || type}</div>
                                     {versions.map(({ version, url }) => {
@@ -372,43 +400,43 @@ const ServerConfigForm: React.FC<ServerConfigFormProps> = ({ onGenerate, isLoadi
                                         );
                                     })}
                                 </div>
-                            ))
-                            }
+                            )})}
                         </div>
 
                          {!isFetchingJars && Object.keys(jarVersions).length > 0 && (
                             <div className="p-2 border-t border-slate-700 bg-slate-900/80 backdrop-blur-sm shrink-0 space-y-2">
-                                <button
-                                type="button"
-                                onClick={handleJarDownload}
-                                disabled={!selectedJar || downloadState === 'downloading'}
-                                className="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors text-sm"
-                                >
-                                {downloadState === 'downloading' && (<><LoaderCircle className="animate-spin w-4 h-4 mr-2" />{t('form.minecraft.downloadingButton')}</>)}
-                                {downloadState === 'success' && (<><Check className="w-4 h-4 mr-2" />{t('form.minecraft.downloadSuccessButton')}</>)}
-                                {downloadState === 'idle' && (
-                                    selectedJar 
-                                    ? <><Download className="w-4 h-4 mr-2" />{t('form.minecraft.downloadSelectedButton')}</>
-                                    : t('form.minecraft.selectVersionPrompt')
-                                )}
-                                </button>
-                                {downloadError && (
-                                    <div className="space-y-2">
-                                        <div className="flex items-start p-2 text-red-400 bg-red-900/20 rounded-md text-xs">
-                                            <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 shrink-0" />
-                                            <span className="break-words">{downloadError}</span>
-                                        </div>
+                                <div className="flex items-stretch gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={handleJarDownload}
+                                        disabled={!selectedJar || downloadState === 'downloading'}
+                                        className="flex-grow bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors text-sm"
+                                    >
+                                        {downloadState === 'downloading' && (<><LoaderCircle className="animate-spin w-4 h-4 mr-2" />{t('form.minecraft.downloadingButton')}</>)}
+                                        {downloadState === 'success' && (<><Check className="w-4 h-4 mr-2" />{t('form.minecraft.downloadSuccessButton')}</>)}
+                                        {downloadState === 'idle' && (
+                                            selectedJar 
+                                            ? <><Download className="w-4 h-4 mr-2" />{t('form.minecraft.downloadSelectedButton')}</>
+                                            : t('form.minecraft.selectVersionPrompt')
+                                        )}
+                                    </button>
+                                    <Tooltip text={linkCopied ? t('form.minecraft.linkCopied') : t('form.minecraft.copyLink')}>
                                         <button
                                             type="button"
                                             onClick={handleCopyLink}
-                                            className="w-full bg-slate-600 hover:bg-slate-500 text-white font-bold py-1.5 px-3 rounded-md flex items-center justify-center transition-colors text-xs"
+                                            disabled={!selectedJar}
+                                            className="shrink-0 p-2.5 bg-slate-600 hover:bg-slate-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-md flex items-center justify-center transition-colors"
+                                            aria-label={t('form.minecraft.copyLink')}
                                         >
-                                            {linkCopied ? (
-                                                <><Check className="w-4 h-4 mr-2 text-green-400" />{t('form.minecraft.linkCopied')}</>
-                                            ) : (
-                                                <><Link2 className="w-4 h-4 mr-2" />{t('form.minecraft.copyLink')}</>
-                                            )}
+                                            {linkCopied ? <Check className="w-5 h-5 text-green-400" /> : <Link2 className="w-5 h-5" />}
                                         </button>
+                                    </Tooltip>
+                                </div>
+
+                                {downloadError && (
+                                    <div className="flex items-start p-2 text-red-400 bg-red-900/20 rounded-md text-xs">
+                                        <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 shrink-0" />
+                                        <span className="break-words">{downloadError}</span>
                                     </div>
                                 )}
                             </div>
