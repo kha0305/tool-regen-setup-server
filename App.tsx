@@ -9,6 +9,60 @@ import { LoaderCircle, AlertTriangle, FileCode2, Info, Archive, MemoryStick, Sha
 import JSZip from 'jszip';
 import { useLanguage } from './contexts/LanguageContext';
 
+const sendDiscordNotification = async (
+    webhookUrl: string,
+    serverConfig: ServerConfig,
+    generatedConfig: GeneratedConfig
+) => {
+    const { gameName, serverName, playerCount } = serverConfig;
+    const { files, recommendedRamGB, recommendedCpu, recommendedSsdGB } = generatedConfig;
+
+    const fileList = files.map(f => f.fileName).join(', ') || 'N/A';
+    
+    const recommendations = [
+        recommendedRamGB && `RAM: **${recommendedRamGB}GB**`,
+        recommendedCpu && `CPU: **${recommendedCpu}**`,
+        recommendedSsdGB && `SSD: **${recommendedSsdGB}GB**`
+    ].filter(Boolean).join(' | ');
+
+    const payload = {
+        username: "AI Server Builder",
+        embeds: [
+        {
+            title: "✅ Server Configuration Generated!",
+            description: `Your configuration files for **${gameName}** are ready.`,
+            color: 3447003, // A nice blue color
+            fields: [
+                { name: "Server Name", value: serverName, inline: true },
+                { name: "Max Players", value: String(playerCount), inline: true },
+                { name: "Game", value: gameName, inline: true },
+                { name: "📄 Generated Files", value: `\`${fileList}\`` },
+                ...(recommendations ? [{ name: "💡 System Recommendations", value: recommendations }] : [])
+            ],
+            footer: {
+                text: "Powered by Google Gemini"
+            },
+            timestamp: new Date().toISOString()
+        }
+        ]
+    };
+
+    try {
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            console.error(`Discord webhook failed with status ${response.status}:`, await response.text());
+        }
+    } catch (error) {
+        console.error("Failed to send Discord notification:", error);
+    }
+};
+
+
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isZipping, setIsZipping] = useState<boolean>(false);
@@ -17,6 +71,7 @@ const App: React.FC = () => {
   const [submittedConfig, setSubmittedConfig] = useState<ServerConfig | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<Record<string, boolean>>({});
   const [isExplanationOpen, setIsExplanationOpen] = useState(true);
+  const [activeFile, setActiveFile] = useState<string | null>(null);
   const { language, t } = useLanguage();
 
   const handleGenerate = async (config: ServerConfig) => {
@@ -26,6 +81,7 @@ const App: React.FC = () => {
     setSubmittedConfig(config);
     setSelectedFiles({});
     setIsExplanationOpen(true);
+    setActiveFile(null);
 
     try {
       const result = await generateServerConfig(config, language);
@@ -35,6 +91,15 @@ const App: React.FC = () => {
         return acc;
       }, {} as Record<string, boolean>);
       setSelectedFiles(initialSelection);
+      if (result.files.length > 0) {
+        setActiveFile(result.files[0].fileName);
+      }
+
+      // Send Discord notification if URL is provided
+      if (config.discordWebhookUrl) {
+          sendDiscordNotification(config.discordWebhookUrl, config, result);
+      }
+
     } catch (err) {
       const message = err instanceof Error ? err.message : t('errors.unknown');
       setError(t('errors.generateConfig', { message }));
@@ -95,14 +160,14 @@ const App: React.FC = () => {
   const selectedCount = Object.values(selectedFiles).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300">
+    <div className="min-h-screen">
       <Header />
       <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 animate-fade-in-left">
             <ServerConfigForm onGenerate={handleGenerate} isLoading={isLoading} />
           </div>
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 animate-fade-in-right">
             <div className="glass-container rounded-2xl p-6 shadow-2xl shadow-black/20 h-full min-h-[400px] lg:min-h-0 flex flex-col">
               <h2 className="text-xl font-bold mb-4 text-cyan-400 flex items-center">
                 <FileCode2 className="w-6 h-6 mr-3" />
@@ -130,10 +195,10 @@ const App: React.FC = () => {
                  </div>
               )}
               {generatedConfig && (
-                <div className="space-y-6 animate-fade-in-up">
+                <div className="space-y-6">
                     <div className="space-y-4">
                       {generatedConfig.explanation && (
-                        <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg transition-all duration-300">
+                        <div className="bg-sky-500/10 border border-sky-500/20 rounded-lg transition-all duration-300 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                           <button
                             onClick={() => setIsExplanationOpen(prev => !prev)}
                             className="w-full flex items-center justify-between p-4 text-left focus:outline-none focus:ring-2 focus:ring-sky-500/50 rounded-lg"
@@ -158,7 +223,7 @@ const App: React.FC = () => {
                       )}
 
                         {(generatedConfig.recommendedRamGB || generatedConfig.recommendedCpu || generatedConfig.recommendedSsdGB) && (
-                            <div>
+                            <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                                 <h3 className="font-bold text-slate-300 mb-3 mt-2">{t('results.recommendationsTitle')}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {generatedConfig.recommendedRamGB && (
@@ -200,45 +265,63 @@ const App: React.FC = () => {
                     </div>
 
                   {generatedConfig.files.length > 0 && (
-                    <div className="pt-4 space-y-4">
-                        <div className="space-y-2">
+                    <div className="pt-4 space-y-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-2">
                             <h4 className="font-bold text-slate-300">{t('results.selectFilesTitle')}</h4>
+                            <button
+                                onClick={handleDownloadZip}
+                                disabled={isZipping || selectedCount === 0}
+                                className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-500/20 text-sm shrink-0"
+                            >
+                                {isZipping ? (
+                                    <>
+                                        <LoaderCircle className="animate-spin w-5 h-5 mr-2" />
+                                        {t('results.downloadZipButtonLoading')}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Archive className="w-5 h-5 mr-2" />
+                                        {selectedCount > 0 ? t('results.downloadZipButton', { count: selectedCount }) : t('results.downloadZipButtonNoSelection')}
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                        
+                        <div className="border-b border-slate-700 flex space-x-2 overflow-x-auto no-scrollbar">
                             {generatedConfig.files.map(file => (
-                                <label key={file.fileName} className="flex items-center space-x-3 cursor-pointer p-2 rounded-md hover:bg-slate-800/50 transition-colors">
-                                    <input 
+                                <div key={file.fileName} 
+                                     className={`flex items-center shrink-0 pl-3 pr-4 py-2 border-b-2 text-sm font-medium rounded-t-md transition-colors cursor-pointer ${
+                                        activeFile === file.fileName
+                                        ? 'border-cyan-400 text-cyan-400 bg-slate-800/50'
+                                        : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                                     }`}
+                                     onClick={() => setActiveFile(file.fileName)}
+                                >
+                                    <input
                                         type="checkbox"
                                         checked={selectedFiles[file.fileName] || false}
-                                        onChange={() => handleFileSelectionChange(file.fileName)}
-                                        className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleFileSelectionChange(file.fileName);
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="h-4 w-4 mr-2 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
                                         aria-label={`Select file ${file.fileName}`}
                                     />
-                                    <span className="font-mono text-sm text-slate-300">{file.fileName}</span>
-                                </label>
+                                    <span className="font-mono select-none">{file.fileName}</span>
+                                </div>
                             ))}
                         </div>
-                        <button
-                            onClick={handleDownloadZip}
-                            disabled={isZipping || selectedCount === 0}
-                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-500/20"
-                        >
-                            {isZipping ? (
-                                <>
-                                    <LoaderCircle className="animate-spin w-5 h-5 mr-2" />
-                                    {t('results.downloadZipButtonLoading')}
-                                </>
-                            ) : (
-                                <>
-                                    <Archive className="w-5 h-5 mr-2" />
-                                    {selectedCount > 0 ? t('results.downloadZipButton', { count: selectedCount }) : t('results.downloadZipButtonNoSelection')}
-                                </>
-                            )}
-                        </button>
+
+                         <div className="mt-0">
+                            {activeFile && (() => {
+                                const file = generatedConfig.files.find(f => f.fileName === activeFile);
+                                if (!file) return null;
+                                return <CodeOutput key={file.fileName} title={file.fileName} code={file.fileContent} />;
+                            })()}
+                        </div>
                     </div>
                   )}
-
-                  {generatedConfig.files.map((file, index) => (
-                    <CodeOutput key={index} title={file.fileName} code={file.fileContent} />
-                  ))}
                 </div>
               )}
             </div>

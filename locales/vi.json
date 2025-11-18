@@ -16,12 +16,15 @@
     "serverNameTooltip": "Tên sẽ xuất hiện trong trình duyệt máy chủ trong game.",
     "playerCountLabel": "Số người chơi tối đa ({count})",
     "playerCountTooltip": "Đặt số lượng người chơi tối đa có thể tham gia máy chủ cùng lúc.",
+    "serverPortLabel": "Cổng Máy chủ",
+    "serverPortTooltip": "Cổng mạng mà máy chủ sẽ chạy trên đó. Đảm bảo cổng này đã được mở (port forward) trên router của bạn nếu muốn người chơi kết nối từ internet.",
     "descriptionLabel": "Mô tả, Mods & Luật lệ Máy chủ",
     "descriptionPlaceholder": "ví dụ: Tập trung PvE, loot x2, liệt kê các mod...",
     "descriptionTooltip": "Mô tả mục đích của máy chủ. Đề cập đến bất kỳ luật lệ, mod hoặc cài đặt đặc biệt nào (ví dụ: PvE, loot x2).",
     "worldSeedLabel": "World Seed / Tên Bản đồ (Tùy chọn)",
     "worldSeedPlaceholder": "Để trống để tạo ngẫu nhiên/mặc định",
     "worldSeedTooltip": "Nhập một seed cụ thể để tạo thế giới hoặc tên bản đồ. Để trống cho thế giới ngẫu nhiên/mặc định.",
+    "randomizeSeedTooltip": "Tạo một seed ngẫu nhiên cho thế giới mới.",
     "submitButton": "Tạo tệp máy chủ",
     "submitButtonLoading": "Đang tạo...",
     "validationAlert": "Vui lòng chọn hoặc nhập tên game.",
@@ -45,12 +48,34 @@
       "enablePvp": "Bật PvP",
       "enablePvpTooltip": "Cho phép người chơi tấn công lẫn nhau.",
       "onlineMode": "Chế độ Online",
-      "onlineModeTooltip": "Yêu cầu người chơi phải xác thực với máy chủ Mojang. Tắt đối với các máy chủ ngoại tuyến/lậu."
+      "onlineModeTooltip": "Yêu cầu người chơi phải xác thực với máy chủ Mojang. Tắt đối với các máy chủ ngoại tuyến/lậu.",
+      "downloadJarButton": "Tải Server JAR",
+      "downloadJarTooltip": "Tải tệp .jar của máy chủ cho một phiên bản Minecraft cụ thể. Tệp này là bắt buộc để chạy máy chủ.",
+      "vanillaTitle": "Vanilla (Chính thức)",
+      "paperTitle": "Paper (Tối ưu hóa)",
+      "spigotTitle": "Spigot (Tối ưu hóa + Plugins)",
+      "purpurTitle": "Purpur (Tối ưu hóa cao)",
+      "fetchingJars": "Đang tải danh sách phiên bản...",
+      "fetchError": "Không thể tải danh sách phiên bản: {message}",
+      "fetchFallback": "Không thể tải danh sách phiên bản trực tiếp. Đang hiển thị danh sách cache.",
+      "downloadError": "Không thể bắt đầu tải, có thể do trình chặn pop-up. Dùng nút 'Sao chép Liên kết' và dán vào tab mới. Nếu vẫn lỗi, kiểm tra kết nối mạng hoặc thử phiên bản khác.",
+      "copyLink": "Sao chép Liên kết",
+      "linkCopied": "Đã sao chép!",
+      "downloadSelectedButton": "Tải phiên bản đã chọn",
+      "downloadingButton": "Đang tải...",
+      "downloadSuccessButton": "Tải thành công!",
+      "selectVersionPrompt": "Chọn một phiên bản ở trên"
     },
     "valheim": {
       "serverPassword": "Mật khẩu Máy chủ",
       "serverPasswordPlaceholder": "Để trống nếu không có mật khẩu",
       "serverPasswordTooltip": "Đặt mật khẩu để biến máy chủ của bạn thành riêng tư."
+    },
+     "notifications": {
+      "title": "Thông báo",
+      "discordWebhookUrlLabel": "URL Webhook Discord (Tùy chọn)",
+      "discordWebhookUrlTooltip": "Nhập URL webhook của Discord để nhận thông báo khi tệp máy chủ của bạn được tạo.",
+      "discordWebhookUrlPlaceholder": "https://discord.com/api/webhooks/..."
     }
   },
   "results": {

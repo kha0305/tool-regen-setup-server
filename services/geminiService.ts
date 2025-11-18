@@ -16,6 +16,7 @@ const generateGenericMockConfig = (config: ServerConfig, lang: 'vi' | 'en'): Gen
 
 server_name = "${config.serverName}"
 max_players = ${config.playerCount}
+port = ${config.serverPort}
 world_seed = "${config.worldSeedOrMap || 'random-mock-seed'}"
 description = "${config.serverDescription}"
 
@@ -33,10 +34,11 @@ echo "  STARTING MOCK SERVER: ${config.serverName}"
 echo "==============================================="
 echo "Game: ${config.gameName}"
 echo "Max Players: ${config.playerCount}"
+echo "Port: ${config.serverPort}"
 echo ""
 echo "NOTE: This is a mock script. In a real environment,"
 echo "you would execute the game's dedicated server binary here,"
-echo "e.g., './${config.gameName.toLowerCase().replace(/\s/g, '_')}_server -config server.cfg'"
+echo "e.g., './${config.gameName.toLowerCase().replace(/\s/g, '_')}_server -config server.cfg -port ${config.serverPort}'"
 echo ""
 echo "Server is now 'running'. Press Ctrl+C to stop."
 
@@ -84,6 +86,7 @@ export const generateServerConfig = async (config: ServerConfig, lang: 'vi' | 'e
     '{{gameName}}': config.gameName,
     '{{serverName}}': config.serverName,
     '{{playerCount}}': String(config.playerCount),
+    '{{serverPort}}': String(config.serverPort),
     '{{worldSeedOrMap}}': config.worldSeedOrMap || gameTemplate.defaultWorldName,
     '{{serverDescription}}': config.serverDescription,
     '{{recommendedRamGB}}': String(recommendedRam),

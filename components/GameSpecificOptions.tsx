@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import Tooltip from './Tooltip';
@@ -61,7 +60,7 @@ const GameSpecificOptions: React.FC<GameSpecificOptionsProps> = ({ game, options
                     type="checkbox"
                     checked={options.minecraft_pvp ?? true}
                     onChange={(e) => onChange('minecraft_pvp', e.target.checked)}
-                    className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
+                    className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500 transition"
                 />
                 <span className={labelClasses}>{t('form.minecraft.enablePvp')}</span>
                 <Tooltip text={t('form.minecraft.enablePvpTooltip')} />
@@ -73,7 +72,7 @@ const GameSpecificOptions: React.FC<GameSpecificOptionsProps> = ({ game, options
                     type="checkbox"
                     checked={options.minecraft_online_mode ?? true}
                     onChange={(e) => onChange('minecraft_online_mode', e.target.checked)}
-                    className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
+                    className="h-4 w-4 accent-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500 transition"
                 />
                 <span className={labelClasses}>{t('form.minecraft.onlineMode')}</span>
                 <Tooltip text={t('form.minecraft.onlineModeTooltip')} />

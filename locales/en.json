@@ -16,12 +16,15 @@
     "serverNameTooltip": "The name that will appear in the in-game server browser.",
     "playerCountLabel": "Max Players ({count})",
     "playerCountTooltip": "Set the maximum number of players that can join the server at once.",
+    "serverPortLabel": "Server Port",
+    "serverPortTooltip": "The network port the server will run on. Ensure this port is forwarded on your router if you want players to connect from the internet.",
     "descriptionLabel": "Server Description, Mods & Rules",
     "descriptionPlaceholder": "e.g., PvE focus, 2x loot, list of mods...",
     "descriptionTooltip": "Describe the purpose of your server. Mention any rules, mods, or special settings (e.g., PvE, 2x loot).",
     "worldSeedLabel": "World Seed / Map Name (Optional)",
     "worldSeedPlaceholder": "Leave blank for random/default",
     "worldSeedTooltip": "Enter a specific seed to generate a world or a map name. Leave blank for a random/default world.",
+    "randomizeSeedTooltip": "Generate a random seed for a new world.",
     "submitButton": "Generate Server Files",
     "submitButtonLoading": "Generating...",
     "validationAlert": "Please select or enter a game name.",
@@ -45,12 +48,34 @@
       "enablePvp": "Enable PvP",
       "enablePvpTooltip": "Allows players to damage each other.",
       "onlineMode": "Online Mode",
-      "onlineModeTooltip": "Requires players to be authenticated with Mojang servers. Disable for offline/cracked servers."
+      "onlineModeTooltip": "Requires players to be authenticated with Mojang servers. Disable for offline/cracked servers.",
+      "downloadJarButton": "Download Server JAR",
+      "downloadJarTooltip": "Download the server .jar file for a specific Minecraft version. This is required to run the server.",
+      "vanillaTitle": "Vanilla (Official)",
+      "paperTitle": "Paper (Optimized)",
+      "spigotTitle": "Spigot (Optimized + Plugins)",
+      "purpurTitle": "Purpur (Highly Optimized)",
+      "fetchingJars": "Loading version list...",
+      "fetchError": "Could not load version list: {message}",
+      "fetchFallback": "Could not load live versions. Displaying a cached list instead.",
+      "downloadError": "Download couldn't start, likely due to a pop-up blocker. Use 'Copy Link' and paste in a new tab. If issues persist, check your connection or try another version.",
+      "copyLink": "Copy Link",
+      "linkCopied": "Link Copied!",
+      "downloadSelectedButton": "Download Selected Version",
+      "downloadingButton": "Downloading...",
+      "downloadSuccessButton": "Download successful!",
+      "selectVersionPrompt": "Select a version above"
     },
     "valheim": {
       "serverPassword": "Server Password",
       "serverPasswordPlaceholder": "Keep empty for no password",
       "serverPasswordTooltip": "Set a password to make your server private."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "discordWebhookUrlLabel": "Discord Webhook URL (Optional)",
+      "discordWebhookUrlTooltip": "Enter a Discord webhook URL to receive a notification when your server files are generated.",
+      "discordWebhookUrlPlaceholder": "https://discord.com/api/webhooks/..."
     }
   },
   "results": {
